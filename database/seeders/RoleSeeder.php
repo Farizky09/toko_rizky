@@ -20,22 +20,20 @@ class RoleSeeder extends Seeder
         $role_admin = Role::create(['name' => User::ADMIN, 'guard_name' => 'web']);
         $role_owner = Role::create(['name' => User::OWNER, 'guard_name' => 'web']);
         $role_cashier = Role::create(['name' => User::CASHIER, 'guard_name' => 'web']);
-        $role_inventoryStaff = Role::create(['name' => User::INVENTORY_STAFF, 'guard_name' => 'web']);
+        $role_inventory_staff = Role::create(['name' => User::INVENTORY_STAFF, 'guard_name' => 'web']);
 
         $permission_admin = [
-            'create_user_management',
             'read_user_management',
+            'create_user_management',
             'update_user_management',
             'delete_user_management',
-            'resetPassword_user_management',
-
-            'create_role',
+            'reset_password_user_management',
             'read_role',
+            'create_role',
             'update_role',
             'delete_role',
-
-            'create_permission',
             'read_permission',
+            'create_permission',
             'update_permission',
             'delete_permission',
         ];
@@ -43,13 +41,13 @@ class RoleSeeder extends Seeder
 
         $permission_owner = [];
         $permission_cashier = [];
-        $permission_inventoryStaff = [];
+        $permission_inventory_staff = [];
 
 
         $role_admin->givePermissionTo($permission_admin);
         $role_owner->givePermissionTo($permission_owner);
         $role_cashier->givePermissionTo($permission_cashier);
-        $role_inventoryStaff->givePermissionTo($permission_inventoryStaff);
+        $role_inventory_staff->givePermissionTo($permission_inventory_staff);
 
 
 
