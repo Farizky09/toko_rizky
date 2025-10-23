@@ -1,4 +1,4 @@
-  @extends('layouts.admin')
+  @extends('layouts.master')
 
   @section('content')
       <main class="flex-1 overflow-y-auto bg-gray-50 p-6 lg:p-6">
@@ -36,11 +36,11 @@
   @endsection
 
   @push('scripts')
-  <script>
-        @if (session('success'))
-            Alert.success("{{ session('success') }}");
-        @endif
-  </script>
+      <script>
+          @if (session('success'))
+              Alert.success("{{ session('success') }}");
+          @endif
+      </script>
       <script>
           $(document).ready(function() {
               $('#adminTable').DataTable({
