@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Backend\UserManagement\PermissionController;
-use App\Http\Controllers\Backend\UserManagement\RoleController;
+use App\Http\Controllers\Backend\PermissionController;
+use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\UserManagementController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -15,7 +15,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::prefix('admin')->name('admin.')->middleware(['role:admin'])->group(function () {
+    Route::prefix('admin')->middleware(['role:admin'])->group(function () {
         Route::prefix('permission')->name('permission.')->group(function () {
             Route::get('/', [PermissionController::class, 'index'])->middleware('permission:read_permission')->name('permission.index');
             Route::get('/create', [PermissionController::class, 'create'])->middleware('permission:create_permission')->name('permission.create');
@@ -25,7 +25,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/update/{id}', [PermissionController::class, 'update'])->middleware('permission:update_permission')->name('permission.update');
             Route::delete('/delete/{id}', [PermissionController::class, 'delete'])->middleware('permission:delete_permission')->name('permission.delete');
         });
-        Route::prefix('role')->name('role.')->group(function () {
+        Route::prefix('role')->group(function () {
             Route::get('/', [RoleController::class, 'index'])->middleware('permission:read_role')->name('role.index');
             Route::get('/create', [RoleController::class, 'create'])->middleware('permission:create_role')->name('role.create');
             Route::post('/store', [RoleController::class, 'store'])->middleware('permission:create_role')->name('role.store');
@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/update/{id}', [RoleController::class, 'update'])->middleware('permission:update_role')->name('role.update');
             Route::delete('/delete/{id}', [RoleController::class, 'delete'])->middleware('permission:delete_role')->name('role.delete');
         });
-        Route::prefix('user-management')->name('user-management.')->group(function () {
+        Route::prefix('user-management')->group(function () {
             Route::get('/', [UserManagementController::class, 'index'])->middleware('permission:read_user_management')->name('user_management.index');
             Route::get('/create', [UserManagementController::class, 'create'])->middleware('permission:create_user_management')->name('user_management.create');
             Route::post('/store', [UserManagementController::class, 'store'])->middleware('permission:create_user_management')->name('user_management.store');

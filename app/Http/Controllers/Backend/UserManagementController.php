@@ -97,7 +97,12 @@ class UserManagementController extends Controller
         } catch (\Throwable $th) {
             return redirect()->route('user-management.index')->with('error', 'User gagal dihapus: ' . $th->getMessage());
         }
-        
+        // try {
+        //     $this->userManagement->delete($id);
+        //     return response()->json(['success' => 'User berhasil dihapus.']);
+        // } catch (\Throwable $th) {
+        //     return response()->json(['error' => 'User gagal dihapus: ' . $th->getMessage()], 500);
+        // }
     }
     public function updatePermission(Request $request, $id)
     {

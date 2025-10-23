@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Backend\UserManagement;
+namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\PermissionInterfaces;

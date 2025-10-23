@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Backend\UserManagement;
+namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\PermissionInterfaces;
@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 class RoleController extends Controller
 {
     private $role;
+
     private $permission;
     public function __construct(RoleInterfaces $role, PermissionInterfaces $permission)
     {
