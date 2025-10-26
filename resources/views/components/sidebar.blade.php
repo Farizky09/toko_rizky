@@ -8,8 +8,94 @@
     </div>
 
     <nav class="flex-1 space-y-2 p-4">
+        <!-- Label Master Data -->
+        <div class="px-4 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            Master Data
+        </div>
 
+        {{-- <!-- Dropdown Product -->
+        <div x-data="{ open: {{ request()->routeIs(['kategori.*', 'brand.*', 'satuan-kecil.*', 'satuan-besar.*', 'product.*']) ? 'true' : 'false' }} }" class="space-y-1">
+            <button @click="open = !open"
+                class="flex w-full items-center justify-between gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
+                {{ request()->routeIs(['kategori.*', 'brand.*', 'satuan-kecil.*', 'satuan-besar.*', 'product.*']) ? 'bg-green-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}">
+                <div class="flex items-center gap-3">
+                    <span class="mdi mdi-package-variant-closed text-xl"></span>
+                    Product
+                </div>
+                <span class="mdi mdi-chevron-down transition-transform" :class="{ 'rotate-180': open }"></span>
+            </button>
+            <div x-show="open" x-transition class="ml-4 space-y-1 border-l-2 border-gray-200 pl-4">
+                <a href="{{ route('kategori.index') }}"
+                    class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
+                    {{ request()->routeIs('kategori.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    <span class="mdi mdi-tag-outline text-lg"></span>
+                    Kategori
+                </a>
+                <a href="{{ route('brand.index') }}"
+                    class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
+                    {{ request()->routeIs('brand.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    <span class="mdi mdi-label-outline text-lg"></span>
+                    Brand
+                </a>
+                <a href="{{ route('satuan-kecil.index') }}"
+                    class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
+                    {{ request()->routeIs('satuan-kecil.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    <span class="mdi mdi-scale-balance text-lg"></span>
+                    Satuan Kecil
+                </a>
+                <a href="{{ route('satuan-besar.index') }}"
+                    class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
+                    {{ request()->routeIs('satuan-besar.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    <span class="mdi mdi-scale text-lg"></span>
+                    Satuan Besar
+                </a>
+                <a href="{{ route('product.index') }}"
+                    class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
+                    {{ request()->routeIs('product.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    <span class="mdi mdi-package-variant-closed text-lg"></span>
+                    Product
+                </a>
+            </div>
+        </div>
 
+        <!-- Dropdown People -->
+        <div x-data="{ open: {{ request()->routeIs(['supplier.*', 'cashier.*', 'stock-staff.*', 'customer.*']) ? 'true' : 'false' }} }" class="space-y-1">
+            <button @click="open = !open"
+                class="flex w-full items-center justify-between gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
+                {{ request()->routeIs(['supplier.*', 'cashier.*', 'stock-staff.*', 'customer.*']) ? 'bg-green-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}">
+                <div class="flex items-center gap-3">
+                    <span class="mdi mdi-account-group text-xl"></span>
+                    People
+                </div>
+                <span class="mdi mdi-chevron-down transition-transform" :class="{ 'rotate-180': open }"></span>
+            </button>
+            <div x-show="open" x-transition class="ml-4 space-y-1 border-l-2 border-gray-200 pl-4">
+                <a href="{{ route('supplier.index') }}"
+                    class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
+                    {{ request()->routeIs('supplier.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    <span class="mdi mdi-truck-outline text-lg"></span>
+                    Supplier
+                </a>
+                <a href="{{ route('cashier.index') }}"
+                    class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
+                    {{ request()->routeIs('cashier.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    <span class="mdi mdi-cash-register text-lg"></span>
+                    Cashier
+                </a>
+                <a href="{{ route('stock-staff.index') }}"
+                    class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
+                    {{ request()->routeIs('stock-staff.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    <span class="mdi mdi-account-box-multiple text-lg"></span>
+                    Stock Staff
+                </a>
+                <a href="{{ route('customer.index') }}"
+                    class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
+                    {{ request()->routeIs('customer.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    <span class="mdi mdi-account-outline text-lg"></span>
+                    Customer
+                </a>
+            </div>
+        </div> --}}
 
         @canany(['read_permission', 'read_role', 'read_user_management'])
             <!-- Label Manajemen Sistem -->
@@ -58,13 +144,7 @@
         @endcanany
     </nav>
 
-
     <div class="mt-auto border-t border-gray-200 p-4">
-        {{-- <a href="#"
-            class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-gray-600 hover:bg-gray-100 hover:text-gray-800 font-medium">
-            <span class="mdi mdi-cog-outline text-xl"></span>
-            Pengaturan
-        </a> --}}
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit"
@@ -76,39 +156,3 @@
     </div>
 </aside>
 <div id="overlay" class="fixed inset-0 z-20 bg-black bg-opacity-50 hidden md:hidden"></div>
-
-@push('scripts')
-    <script>
-        const sidebar = document.getElementById('sidebar');
-        // const menuButton = document.getElementById('menu-button');
-        const overlay = document.getElementById('overlay');
-        const menuItems = document.querySelectorAll('aside nav a');
-
-        function toggleSidebar() {
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        }
-
-        // Fungsi untuk menangani menu aktif
-        function setActiveMenu(event) {
-            // Hapus kelas aktif dari semua item menu
-            menuItems.forEach(item => {
-                item.classList.remove('bg-green-600', 'text-white');
-                item.classList.add('text-gray-600', 'hover:bg-gray-100');
-            });
-
-            // Tambahkan kelas aktif ke item yang diklik
-            const clickedItem = event.currentTarget;
-            clickedItem.classList.add('bg-green-600', 'text-white');
-            clickedItem.classList.remove('text-gray-600', 'hover:bg-gray-100');
-        }
-
-        // menuButton.addEventListener('click', toggleSidebar);
-        overlay.addEventListener('click', toggleSidebar);
-
-        // Tambahkan event listener ke setiap item menu
-        menuItems.forEach(item => {
-            item.addEventListener('click', setActiveMenu);
-        });
-    </script>
-@endpush

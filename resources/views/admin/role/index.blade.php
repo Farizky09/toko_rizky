@@ -3,17 +3,16 @@
   @section('content')
       <main class="flex-1 overflow-y-auto bg-gray-50 p-6 lg:p-6">
           <div>
-              <h1 class="text-3xl font-bold text-gray-800">Manajemen Ijin Penggunaan Fitur</h1>
-              <p class="mt-1 text-gray-600">Halaman pengelolaan semua ijin penggunaan fitur</p>
+              <h1 class="text-3xl font-bold text-gray-800">Manajemen Hak Akses</h1>
+              <p class="mt-1 text-gray-600">Halaman pengelolaan hak akses untuk semua akun</p>
           </div>
 
           <div class="mt-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-
-              @canany(['create_permission'])
-                  <a href="{{ route('permission.create') }}"
+              @canany(['create_role'])
+                  <a href="{{ route('role.create') }}"
                       class="flex min-w-fit items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ml-auto">
                       <span class="mdi mdi-plus-circle-outline text-lg"></span>
-                      Tambah Permission
+                      Tambah Hak Akses
                   </a>
               @endcanany
 
@@ -46,7 +45,7 @@
               $('#adminTable').DataTable({
                   responsive: true,
                   ajax: {
-                      url: '{{ route('permission.index') }}',
+                      url: '{{ route('role.index') }}',
                       type: 'GET'
                   },
                   columns: [{

@@ -24,7 +24,7 @@ class RoleController extends Controller
         if ($request->ajax()) {
             $data = $this->role->datatable();
             return datatables()->of($data)
-                ->addColumn('name', fn($data) => $data->name)
+                ->addColumn('name', fn($data) => ucwords(str_replace('_', ' ', $data->name)))
                 ->addColumn('action', function ($data) {
                     return view('admin.role.column.action', compact('data'));
                 })

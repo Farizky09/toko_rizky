@@ -1,6 +1,6 @@
   <div class="flex items-center gap-2">
-      @canany(['update_permission'])
-          <a href="{{ route('permission.edit', $data->id) }}"
+      @canany(['update_user_management'])
+          <a href="{{ route('user_management.edit', $data->id) }}"
               class="flex col-span-6 items-center gap-3 px-3 py-2 text-sm rounded-lg bg-yellow-200 text-gray-700 hover:bg-gray-100"
               role="menuitem" tabindex="-1">
               <span class="mdi mdi-pencil-outline text-yellow-600 "></span>
@@ -8,8 +8,8 @@
           </a>
       @endcanany
 
-      @canany(['delete_permission'])
-          <form action="{{ route('permission.delete', $data->id) }}" method="POST" class="col-span-6 delete-form">
+      @canany(['delete_user_management'])
+          <form action="{{ route('user_management.delete', $data->id) }}" method="POST" class="col-span-6 delete-form">
               @csrf
               @method('DELETE')
               <button type="button"

@@ -36,7 +36,12 @@ class RoleRepository implements RoleInterfaces
     {
         DB::beginTransaction();
         try {
-            $role = $this->role->create(['name' => $data['name']]);
+            $name = isset($data['name']) ? $data['name'] : null;
+            if ($name !== null && strpos($name, '_') === false) {
+                $name = str_replace(' ', '_', $name);
+            }
+            $data['name'] = $name;
+            $role = $this->role->create($data);
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -57,7 +62,12 @@ class RoleRepository implements RoleInterfaces
         DB::beginTransaction();
         try {
             $role = $this->role->find($id);
-            $role->update(['name' => $data['name']]);
+            $name = isset($data['name']) ? $data['name'] : null;
+            if ($name !== null && strpos($name, '_') === false) {
+                $name = str_replace(' ', '_', $name);
+            }
+            $data['name'] = $name;
+            $role->update($data);
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;

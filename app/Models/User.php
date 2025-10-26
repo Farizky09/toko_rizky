@@ -16,7 +16,7 @@ class User extends Authenticatable
     const ADMIN = 'admin';
     const OWNER = 'owner';
     const CASHIER = 'cashier';
-    const INVENTORY_STAFF = 'inventoryStaff';
+    const INVENTORY_STAFF = 'inventory_staff';
     /**
      * The attributes that are mass assignable.
      *

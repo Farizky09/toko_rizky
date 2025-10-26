@@ -159,41 +159,41 @@ class UserManagementRepository implements UserManagementInterfaces
 
     public function updateProfileUser($data, $id)
     {
-        DB::beginTransaction();
-        try {
-            $user = $this->user->findOrFail($id);
-            $user->update([
-                'name' => $data['name'] ?? $user->name,
-                'email' => $data['email'] ?? $user->email,
-                'username' => $data['username'] ?? $user->username,
-                'phone_number' => $data['phone_number'] ?? $user->phone_number,
-                'address' => $data['address'] ?? $user->address,
-                'birthdate' => $data['birthdate'] ?? $user->birthdate,
-            ]);
-            if (isset($data['profile_photo'])) {
-                $date = Carbon::now();
-                $folderName = $date->format('j-n-Y');
-                $folderPath = "profilePhotos/{$user->id}/{$folderName}";
-                if (!Storage::disk('public')->exists($folderPath)) {
-                    Storage::disk('public')->makeDirectory($folderPath);
-                }
-                $filename = 'img_' . time() . '_' . uniqid() . '.' . $data['profile_photo']->getClientOriginalExtension();
-                $path = $data['profile_photo']->storeAs($folderPath, $filename, 'public');
-                if (!$path || !Storage::disk('public')->exists($path)) {
-                    throw new Exception("Gagal menyimpan file gambar");
-                }
-                if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
-                    Storage::disk('public')->delete($user->profile_photo);
-                }
-                $user->profile_photo = $path;
-                $user->save();
-            }
-            DB::commit();
-            return $user->fresh();
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
+        // DB::beginTransaction();
+        // try {
+        //     $user = $this->user->findOrFail($id);
+        //     $user->update([
+        //         'name' => $data['name'] ?? $user->name,
+        //         'email' => $data['email'] ?? $user->email,
+        //         'username' => $data['username'] ?? $user->username,
+        //         'phone_number' => $data['phone_number'] ?? $user->phone_number,
+        //         'address' => $data['address'] ?? $user->address,
+        //         'birthdate' => $data['birthdate'] ?? $user->birthdate,
+        //     ]);
+        //     if (isset($data['profile_photo'])) {
+        //         $date = Carbon::now();
+        //         $folderName = $date->format('j-n-Y');
+        //         $folderPath = "profilePhotos/{$user->id}/{$folderName}";
+        //         if (!Storage::disk('public')->exists($folderPath)) {
+        //             Storage::disk('public')->makeDirectory($folderPath);
+        //         }
+        //         $filename = 'img_' . time() . '_' . uniqid() . '.' . $data['profile_photo']->getClientOriginalExtension();
+        //         $path = $data['profile_photo']->storeAs($folderPath, $filename, 'public');
+        //         if (!$path || !Storage::disk('public')->exists($path)) {
+        //             throw new Exception("Gagal menyimpan file gambar");
+        //         }
+        //         if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
+        //             Storage::disk('public')->delete($user->profile_photo);
+        //         }
+        //         $user->profile_photo = $path;
+        //         $user->save();
+        //     }
+        //     DB::commit();
+        //     return $user->fresh();
+        // } catch (\Throwable $th) {
+        //     DB::rollBack();
+        //     throw $th;
+        // }
     }
 
     public function changePassword($data, $id)

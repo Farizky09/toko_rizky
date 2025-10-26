@@ -35,6 +35,11 @@ class PermissionRepository implements PermissionInterfaces
     {
         DB::beginTransaction();
         try {
+            $name = isset($data['name']) ? $data['name'] : null;
+            if ($name !== null && strpos($name, '_') === false) {
+                $name = str_replace(' ', '_', $name);
+            }
+            $data['name'] = $name;
             $permission = $this->permission->create($data);
             DB::commit();
             return $permission;
@@ -49,6 +54,11 @@ class PermissionRepository implements PermissionInterfaces
         DB::beginTransaction();
         try {
             $permission = $this->permission->find($id);
+            $name = isset($data['name']) ? $data['name'] : null;
+            if ($name !== null && strpos($name, '_') === false) {
+                $name = str_replace(' ', '_', $name);
+            }
+            $data['name'] = $name;
             if ($permission) {
                 $permission->update($data);
                 DB::commit();
