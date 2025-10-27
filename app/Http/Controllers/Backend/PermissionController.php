@@ -78,18 +78,7 @@ class PermissionController extends Controller
 
     public function delete($id)
     {
-        // try {
-        //     $this->permission->delete($id);
-        //     return response()->json([
-        //         'status' => 'success',
-        //         'message' => 'Permission berhasil dihapus.'
-        //     ]);
-        // } catch (\Throwable $th) {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'message' => 'Permission gagal dihapus: ' . $th->getMessage()
-        //     ]);
-        // }
+        
         try {
             $this->permission->delete($id);
             return redirect()->route('permission.index')->with('success', 'Permission berhasil dihapus.');

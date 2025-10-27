@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Backend\CategoriesController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\RoleController;
+use App\Http\Controllers\Backend\UnitLargesController;
+use App\Http\Controllers\Backend\UnitSmallsController;
 use App\Http\Controllers\Backend\UserManagementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
@@ -44,6 +47,33 @@ Route::middleware('auth')->group(function () {
             Route::get('/edit/{id}', [UserManagementController::class, 'edit'])->middleware('permission:update_user_management')->name('edit');
             Route::put('/update/{id}', [UserManagementController::class, 'update'])->middleware('permission:update_user_management')->name('update');
             Route::delete('/delete/{id}', [UserManagementController::class, 'delete'])->middleware('permission:delete_user_management')->name('delete');
+        });
+        Route::prefix('categories')->name('categories.')->group(function () {
+            Route::get('/', [CategoriesController::class, 'index'])->middleware('permission:read_categories')->name('index');
+            Route::get('/create', [CategoriesController::class, 'create'])->middleware('permission:create_categories')->name('create');
+            Route::post('/store', [CategoriesController::class, 'store'])->middleware('permission:create_categories')->name('store');
+            Route::get('/show/{id}', [CategoriesController::class, 'show'])->middleware('permission:read_categories')->name('show');
+            Route::get('/edit/{id}', [CategoriesController::class, 'edit'])->middleware('permission:update_categories')->name('edit');
+            Route::put('/update/{id}', [CategoriesController::class, 'update'])->middleware('permission:update_categories')->name('update');
+            Route::delete('/delete/{id}', [CategoriesController::class, 'delete'])->middleware('permission:delete_categories')->name('delete');
+        });
+        Route::prefix('unit-larges')->name('unit_larges.')->group(function () {
+            Route::get('/', [UnitLargesController::class, 'index'])->middleware('permission:read_unit_larges')->name('index');
+            Route::get('/create', [UnitLargesController::class, 'create'])->middleware('permission:create_unit_larges')->name('create');
+            Route::post('/store', [UnitLargesController::class, 'store'])->middleware('permission:create_unit_larges')->name('store');
+            Route::get('/show/{id}', [UnitLargesController::class, 'show'])->middleware('permission:read_unit_larges')->name('show');
+            Route::get('/edit/{id}', [UnitLargesController::class, 'edit'])->middleware('permission:update_unit_larges')->name('edit');
+            Route::put('/update/{id}', [UnitLargesController::class, 'update'])->middleware('permission:update_unit_larges')->name('update');
+            Route::delete('/delete/{id}', [UnitLargesController::class, 'delete'])->middleware('permission:delete_unit_larges')->name('delete');
+        });
+        Route::prefix('unit-smalls')->name('unit_smalls.')->group(function () {
+            Route::get('/', [UnitSmallsController::class, 'index'])->middleware('permission:read_unit_smalls')->name('index');
+            Route::get('/create', [UnitSmallsController::class, 'create'])->middleware('permission:create_unit_smalls')->name('create');
+            Route::post('/store', [UnitSmallsController::class, 'store'])->middleware('permission:create_unit_smalls')->name('store');
+            Route::get('/show/{id}', [UnitSmallsController::class, 'show'])->middleware('permission:read_unit_smalls')->name('show');
+            Route::get('/edit/{id}', [UnitSmallsController::class, 'edit'])->middleware('permission:update_unit_smalls')->name('edit');
+            Route::put('/update/{id}', [UnitSmallsController::class, 'update'])->middleware('permission:update_unit_smalls')->name('update');
+            Route::delete('/delete/{id}', [UnitSmallsController::class, 'delete'])->middleware('permission:delete_unit_smalls')->name('delete');
         });
     });
     Route::prefix('owner')->name('owner.')->middleware(['role:owner|admin'])->group(function () {});
