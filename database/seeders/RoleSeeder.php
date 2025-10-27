@@ -36,6 +36,18 @@ class RoleSeeder extends Seeder
             'create_permission',
             'update_permission',
             'delete_permission',
+            'read_categories',
+            'create_categories',
+            'update_categories',
+            'delete_categories',
+            'read_unit_larges',
+            'create_unit_larges',
+            'update_unit_larges',
+            'delete_unit_larges',
+            'read_unit_smalls',
+            'create_unit_smalls',
+            'update_unit_smalls',
+            'delete_unit_smalls',
         ];
 
 

@@ -35,6 +35,22 @@ class PermissionSeeder extends Seeder
             Permission::create(['name' => 'update_permission']);
             Permission::create(['name' => 'delete_permission']);
 
+            //categories
+            Permission::create(['name' => 'read_categories']);
+            Permission::create(['name' => 'create_categories']);
+            Permission::create(['name' => 'update_categories']);
+            Permission::create(['name' => 'delete_categories']);
+            //unit larges
+            Permission::create(['name' => 'read_unit_larges']);
+            Permission::create(['name' => 'create_unit_larges']);
+            Permission::create(['name' => 'update_unit_larges']);
+            Permission::create(['name' => 'delete_unit_larges']);
+
+            Permission::create(['name' => 'read_unit_smalls']);
+            Permission::create(['name' => 'create_unit_smalls']);
+            Permission::create(['name' => 'update_unit_smalls']);
+            Permission::create(['name' => 'delete_unit_smalls']);
+
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         }
     }

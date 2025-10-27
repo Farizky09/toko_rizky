@@ -27,56 +27,37 @@ class CategoriesRepository implements CategoriesInterfaces
         return $this->categories->find($id);
     }
 
-    public function show()
-    {
-        return $this->categories->get();
-    }
 
     public function store($data)
     {
-        DB::beginTransaction();
-        try {
+        return DB::transaction(function () use ($data) {
             $categories = $this->categories->create($data);
-            DB::commit();
             return $categories;
-        } catch (Exception $e) {
-            DB::rollBack();
-            return null;
-        }
+        });
     }
 
     public function update($id, $data)
     {
-        DB::beginTransaction();
-        try {
-            $categories = $this->categories->find($id);
-            $categories->update($data);
-            DB::commit();
-            return $categories;
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            return null;
-        }
+        return DB::transaction(function () use ($id, $data) {
+            $categories = $this->categories->findOrFail($id);
+            if ($categories) {
+                $categories->update($data);
+                return $categories;
+            }
+            throw new Exception('Categories not found');
+        });
     }
+
 
     public function delete($id)
     {
-        DB::beginTransaction();
-        try {
-            $categories = $this->categories->find($id);
+        return DB::transaction(function () use ($id) {
+            $categories = $this->categories->findOrFail($id);
             if ($categories) {
-                $result = $categories->delete();
-                DB::commit();
-                return $result;
+                return $categories->delete();
             }
-            DB::rollBack();
-            return false;
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            return false;
-        }
+            throw new Exception('Categories not found');
+        });
     }
 
     public function datatable()

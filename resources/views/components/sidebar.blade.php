@@ -13,11 +13,11 @@
             Master Data
         </div>
 
-        {{-- <!-- Dropdown Product -->
-        <div x-data="{ open: {{ request()->routeIs(['kategori.*', 'brand.*', 'satuan-kecil.*', 'satuan-besar.*', 'product.*']) ? 'true' : 'false' }} }" class="space-y-1">
+        <!-- Dropdown Product -->
+        <div x-data="{ open: {{ request()->routeIs(['categories.*', 'brand.*', 'unit_smalls.*', 'unit_larges.*', 'product.*']) ? 'true' : 'false' }} }" class="space-y-1">
             <button @click="open = !open"
                 class="flex w-full items-center justify-between gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
-                {{ request()->routeIs(['kategori.*', 'brand.*', 'satuan-kecil.*', 'satuan-besar.*', 'product.*']) ? 'bg-green-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}">
+                {{ request()->routeIs(['categories.*', 'brand.*', 'unit_smalls.*', 'unit_larges.*', 'product.*']) ? 'bg-green-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}">
                 <div class="flex items-center gap-3">
                     <span class="mdi mdi-package-variant-closed text-xl"></span>
                     Product
@@ -25,41 +25,41 @@
                 <span class="mdi mdi-chevron-down transition-transform" :class="{ 'rotate-180': open }"></span>
             </button>
             <div x-show="open" x-transition class="ml-4 space-y-1 border-l-2 border-gray-200 pl-4">
-                <a href="{{ route('kategori.index') }}"
+                <a href="{{ route('categories.index') }}"
                     class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
-                    {{ request()->routeIs('kategori.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    {{ request()->routeIs('categories.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
                     <span class="mdi mdi-tag-outline text-lg"></span>
                     Kategori
                 </a>
-                <a href="{{ route('brand.index') }}"
+                {{-- <a href="{{ route('brand.index') }}"
                     class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
                     {{ request()->routeIs('brand.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
                     <span class="mdi mdi-label-outline text-lg"></span>
                     Brand
-                </a>
-                <a href="{{ route('satuan-kecil.index') }}"
+                </a> --}}
+                <a href="{{ route('unit_smalls.index') }}"
                     class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
-                    {{ request()->routeIs('satuan-kecil.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    {{ request()->routeIs('unit_smalls.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
                     <span class="mdi mdi-scale-balance text-lg"></span>
                     Satuan Kecil
                 </a>
-                <a href="{{ route('satuan-besar.index') }}"
+                <a href="{{ route('unit_larges.index') }}"
                     class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
-                    {{ request()->routeIs('satuan-besar.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    {{ request()->routeIs('unit_larges.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
                     <span class="mdi mdi-scale text-lg"></span>
                     Satuan Besar
                 </a>
-                <a href="{{ route('product.index') }}"
+                {{-- <a href="{{ route('product.index') }}"
                     class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
                     {{ request()->routeIs('product.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
                     <span class="mdi mdi-package-variant-closed text-lg"></span>
                     Product
-                </a>
+                </a> --}}
             </div>
         </div>
 
         <!-- Dropdown People -->
-        <div x-data="{ open: {{ request()->routeIs(['supplier.*', 'cashier.*', 'stock-staff.*', 'customer.*']) ? 'true' : 'false' }} }" class="space-y-1">
+        {{-- <div x-data="{ open: {{ request()->routeIs(['supplier.*', 'cashier.*', 'stock-staff.*', 'customer.*']) ? 'true' : 'false' }} }" class="space-y-1">
             <button @click="open = !open"
                 class="flex w-full items-center justify-between gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
                 {{ request()->routeIs(['supplier.*', 'cashier.*', 'stock-staff.*', 'customer.*']) ? 'bg-green-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}">
