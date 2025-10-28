@@ -56,8 +56,6 @@
                 </div>
             </div>
 
-
-
             <!-- Recent Activity Card -->
             <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
                 <div class="flex items-center">

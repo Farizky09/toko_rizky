@@ -59,10 +59,10 @@
         </div>
 
         <!-- Dropdown People -->
-        {{-- <div x-data="{ open: {{ request()->routeIs(['supplier.*', 'cashier.*', 'stock-staff.*', 'customer.*']) ? 'true' : 'false' }} }" class="space-y-1">
+        <div x-data="{ open: {{ request()->routeIs(['suppliers.*', 'branches.*', 'stock-staff.*', 'customer.*']) ? 'true' : 'false' }} }" class="space-y-1">
             <button @click="open = !open"
                 class="flex w-full items-center justify-between gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
-                {{ request()->routeIs(['supplier.*', 'cashier.*', 'stock-staff.*', 'customer.*']) ? 'bg-green-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}">
+                {{ request()->routeIs(['suppliers.*', 'branches.*', 'stock-staff.*', 'customer.*']) ? 'bg-green-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}">
                 <div class="flex items-center gap-3">
                     <span class="mdi mdi-account-group text-xl"></span>
                     People
@@ -70,19 +70,19 @@
                 <span class="mdi mdi-chevron-down transition-transform" :class="{ 'rotate-180': open }"></span>
             </button>
             <div x-show="open" x-transition class="ml-4 space-y-1 border-l-2 border-gray-200 pl-4">
-                <a href="{{ route('supplier.index') }}"
+                <a href="{{ route('suppliers.index') }}"
                     class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
-                    {{ request()->routeIs('supplier.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    {{ request()->routeIs('suppliers.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
                     <span class="mdi mdi-truck-outline text-lg"></span>
                     Supplier
                 </a>
-                <a href="{{ route('cashier.index') }}"
+                <a href="{{ route('branches.index') }}"
                     class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
-                    {{ request()->routeIs('cashier.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    {{ request()->routeIs('branches.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
                     <span class="mdi mdi-cash-register text-lg"></span>
-                    Cashier
+                    Cabang
                 </a>
-                <a href="{{ route('stock-staff.index') }}"
+                {{-- <a href="{{ route('stock-staff.index') }}"
                     class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
                     {{ request()->routeIs('stock-staff.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
                     <span class="mdi mdi-account-box-multiple text-lg"></span>
@@ -93,9 +93,9 @@
                     {{ request()->routeIs('customer.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
                     <span class="mdi mdi-account-outline text-lg"></span>
                     Customer
-                </a>
+                </a> --}}
             </div>
-        </div> --}}
+        </div>
 
         @canany(['read_permission', 'read_role', 'read_user_management'])
             <!-- Label Manajemen Sistem -->

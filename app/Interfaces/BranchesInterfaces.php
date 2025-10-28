@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-interface UnitLargesInterfaces
+interface BranchesInterfaces
 {
     public function get();
     public function getById($id);

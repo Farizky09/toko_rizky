@@ -51,6 +51,16 @@ class PermissionSeeder extends Seeder
             Permission::create(['name' => 'update_unit_smalls']);
             Permission::create(['name' => 'delete_unit_smalls']);
 
+            Permission::create(['name' => 'read_suppliers']);
+            Permission::create(['name' => 'create_suppliers']);
+            Permission::create(['name' => 'update_suppliers']);
+            Permission::create(['name' => 'delete_suppliers']);
+
+
+            Permission::create(['name' => 'read_branches']);
+            Permission::create(['name' => 'create_branches']);
+            Permission::create(['name' => 'update_branches']);
+            Permission::create(['name' => 'delete_branches']);
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         }
     }

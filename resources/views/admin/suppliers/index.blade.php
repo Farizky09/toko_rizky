@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Manajemen Satuan Kecil')
+@section('title', 'Manajemen Supplier')
 
 @section('content')
     <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
@@ -10,29 +10,29 @@
                 <!-- Page Title & Description -->
                 <div class="space-y-3">
                     <div class="flex items-center gap-4">
-                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50">
-                            <span class="mdi mdi-numeric text-xl text-blue-600"></span>
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50">
+                            <span class="mdi mdi-truck text-xl text-orange-600"></span>
                         </div>
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-900">Manajemen Satuan Kecil</h1>
-                            <p class="text-gray-600 mt-1">Kelola satuan pengukuran kecil dalam sistem</p>
+                            <h1 class="text-2xl font-bold text-gray-900">Manajemen Supplier</h1>
+                            <p class="text-gray-600 mt-1">Kelola data supplier dan pemasok dalam sistem</p>
                         </div>
                     </div>
 
                     <!-- Quick Tips -->
                     <div class="flex items-center gap-2 text-sm text-gray-500">
                         <span class="mdi mdi-lightbulb-on-outline text-amber-500"></span>
-                        <span>Satuan kecil digunakan untuk pengukuran detail seperti gram, mililiter, sentimeter</span>
+                        <span>Supplier adalah mitra pemasok barang atau jasa untuk bisnis Anda</span>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                    @canany(['create_unit_smalls'])
-                        <a href="{{ route('unit_smalls.create') }}"
-                            class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    @canany(['create_suppliers'])
+                        <a href="{{ route('suppliers.create') }}"
+                            class="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-orange-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
                             <span class="mdi mdi-plus-circle-outline text-lg"></span>
-                            Tambah Satuan Kecil
+                            Tambah Supplier
                         </a>
                     @endcanany
                 </div>
@@ -40,18 +40,33 @@
         </div>
 
         <!-- Stats Cards Section -->
-        <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <!-- Total Unit Smalls Card -->
+        <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <!-- Total Suppliers Card -->
             <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50">
-                            <span class="mdi mdi-weight-gram text-xl text-blue-600"></span>
+                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-50">
+                            <span class="mdi mdi-account-multiple text-xl text-orange-600"></span>
                         </div>
                     </div>
                     <div class="ml-4 flex-1">
-                        <p class="text-sm font-medium text-gray-600">Total Satuan Kecil</p>
-                        <p class="text-2xl font-semibold text-gray-900" id="totalUnitSmalls">0</p>
+                        <p class="text-sm font-medium text-gray-600">Total Supplier</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="totalSuppliers">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Suppliers Card -->
+            <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-50">
+                            <span class="mdi mdi-account-check text-xl text-green-600"></span>
+                        </div>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <p class="text-sm font-medium text-gray-600">Supplier Aktif</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="activeSuppliers">0</p>
                     </div>
                 </div>
             </div>
@@ -75,13 +90,13 @@
         <!-- Table Section -->
         <div class="space-y-4">
             <!-- Table Header Card -->
-            <div class="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 shadow-sm">
+            <div class="rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 px-6 py-4 shadow-sm">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <span class="mdi mdi-table text-blue-600 text-xl"></span>
+                        <span class="mdi mdi-table text-orange-600 text-xl"></span>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900">Daftar Satuan Kecil</h3>
-                            <p class="text-sm text-gray-600">Semua satuan kecil yang terdaftar dalam sistem</p>
+                            <h3 class="text-lg font-semibold text-gray-900">Daftar Supplier</h3>
+                            <p class="text-sm text-gray-600">Semua supplier yang terdaftar dalam sistem</p>
                         </div>
                     </div>
 
@@ -101,8 +116,9 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Nama Satuan</th>
-                                <th>Singkatan</th>
+                                <th>Nama Supplier</th>
+                                <th>Alamat</th>
+                                <th>Telepon</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -120,8 +136,8 @@
                 <div class="flex-1">
                     <h4 class="font-semibold text-blue-900">Butuh Bantuan?</h4>
                     <p class="text-sm text-blue-700 mt-1">
-                        Satuan kecil digunakan untuk pengukuran yang lebih detail. Pastikan nama dan singkatan jelas dan
-                        konsisten.
+                        Supplier adalah mitra bisnis yang menyediakan barang atau jasa. Pastikan data supplier lengkap dan
+                        terupdate untuk kelancaran operasional.
                     </p>
                 </div>
             </div>
@@ -139,7 +155,7 @@
             $('#adminTable').DataTable({
                 responsive: true,
                 ajax: {
-                    url: '{{ route('unit_smalls.index') }}',
+                    url: '{{ route('suppliers.index') }}',
                     type: 'GET'
                 },
                 columns: [{
@@ -148,11 +164,34 @@
                     },
                     {
                         data: 'name',
-                        name: 'name'
+                        name: 'name',
+                        render: function(data, type, row) {
+                            return `<div class="flex items-center">
+                                    <span class="mdi mdi-account-outline mr-3 text-lg text-orange-600"></span>
+                                    <span class="font-medium">${data}</span>
+                                </div>`;
+                        }
                     },
                     {
-                        data: 'abbreviation',
-                        name: 'abbreviation'
+                        data: 'address',
+                        name: 'address',
+                        render: function(data) {
+                            if (data && data.length > 50) {
+                                return `<span title="${data}">${data.substring(0, 50)}...</span>`;
+                            }
+                            return data || '-';
+                        }
+                    },
+                    {
+                        data: 'phone',
+                        name: 'phone',
+                        render: function(data) {
+                            if (!data) return '-';
+                            return `<div class="flex items-center gap-2">
+                                    <span class="mdi mdi-phone text-gray-400"></span>
+                                    <span>${data}</span>
+                                </div>`;
+                        }
                     },
                     {
                         data: 'action',
@@ -164,6 +203,7 @@
                 drawCallback: function(settings) {
                     updateStats();
                 }
+
             });
         });
 
@@ -171,7 +211,8 @@
             const table = $('#adminTable').DataTable();
             const totalRecords = table.page.info().recordsTotal;
 
-            $('#totalUnitSmalls').text(totalRecords);
+            $('#totalSuppliers').text(totalRecords);
+            $('#activeSuppliers').text(totalRecords); // Assuming all are active
 
             const now = new Date();
             $('#lastUpdated').text(now.toLocaleTimeString('id-ID', {

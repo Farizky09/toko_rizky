@@ -48,6 +48,14 @@ class RoleSeeder extends Seeder
             'create_unit_smalls',
             'update_unit_smalls',
             'delete_unit_smalls',
+            'read_suppliers',
+            'create_suppliers',
+            'update_suppliers',
+            'delete_suppliers',
+            'read_branches',
+            'create_branches',
+            'update_branches',
+            'delete_branches',
         ];
 
 

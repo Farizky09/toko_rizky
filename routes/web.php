@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Backend\BranchesController;
 use App\Http\Controllers\Backend\CategoriesController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\RoleController;
+use App\Http\Controllers\Backend\SuppliersController;
 use App\Http\Controllers\Backend\UnitLargesController;
 use App\Http\Controllers\Backend\UnitSmallsController;
 use App\Http\Controllers\Backend\UserManagementController;
@@ -74,6 +76,25 @@ Route::middleware('auth')->group(function () {
             Route::get('/edit/{id}', [UnitSmallsController::class, 'edit'])->middleware('permission:update_unit_smalls')->name('edit');
             Route::put('/update/{id}', [UnitSmallsController::class, 'update'])->middleware('permission:update_unit_smalls')->name('update');
             Route::delete('/delete/{id}', [UnitSmallsController::class, 'delete'])->middleware('permission:delete_unit_smalls')->name('delete');
+        });
+
+        Route::prefix('suppliers')->name('suppliers.')->group(function () {
+            Route::get('/', [SuppliersController::class, 'index'])->middleware('permission:read_suppliers')->name('index');
+            Route::get('/create', [SuppliersController::class, 'create'])->middleware('permission:create_suppliers')->name('create');
+            Route::post('/store', [SuppliersController::class, 'store'])->middleware('permission:create_suppliers')->name('store');
+            Route::get('/show/{id}', [SuppliersController::class, 'show'])->middleware('permission:read_suppliers')->name('show');
+            Route::get('/edit/{id}', [SuppliersController::class, 'edit'])->middleware('permission:update_suppliers')->name('edit');
+            Route::put('/update/{id}', [SuppliersController::class, 'update'])->middleware('permission:update_suppliers')->name('update');
+            Route::delete('/delete/{id}', [SuppliersController::class, 'delete'])->middleware('permission:delete_suppliers')->name('delete');
+        });
+        Route::prefix('branches')->name('branches.')->group(function () {
+            Route::get('/', [BranchesController::class, 'index'])->middleware('permission:read_branches')->name('index');
+            Route::get('/create', [BranchesController::class, 'create'])->middleware('permission:create_branches')->name('create');
+            Route::post('/store', [BranchesController::class, 'store'])->middleware('permission:create_branches')->name('store');
+            Route::get('/show/{id}', [BranchesController::class, 'show'])->middleware('permission:read_branches')->name('show');
+            Route::get('/edit/{id}', [BranchesController::class, 'edit'])->middleware('permission:update_branches')->name('edit');
+            Route::put('/update/{id}', [BranchesController::class, 'update'])->middleware('permission:update_branches')->name('update');
+            Route::delete('/delete/{id}', [BranchesController::class, 'delete'])->middleware('permission:delete_branches')->name('delete');
         });
     });
     Route::prefix('owner')->name('owner.')->middleware(['role:owner|admin'])->group(function () {});

@@ -3,24 +3,28 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UnitLargesRequest;
 use App\Interfaces\UnitLargesInterfaces;
 use Illuminate\Http\Request;
 
 class UnitLargesController extends Controller
 {
-    private $unitLarges;
-    public function __construct(UnitLargesInterfaces $unitLarges)
+    private $untiLargesRepository;
+    public function __construct(UnitLargesInterfaces $untiLargesRepository)
     {
-        $this->unitLarges = $unitLarges;
+        $this->untiLargesRepository = $untiLargesRepository;
     }
 
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->unitLarges->datatable();
+            $data = $this->untiLargesRepository->datatable();
             return datatables()->of($data)
                 ->addColumn('name', function ($data) {
-                    return ucwords(str_replace('_', ' ', $data->name));
+                    return $data->name;
+                })
+                ->addColumn('abbreviation', function ($data) {
+                    return $data->abbreviation;
                 })
                 ->addColumn('action', function ($data) {
                     return view('admin.unit_larges.column.action', compact('data'));
@@ -32,46 +36,47 @@ class UnitLargesController extends Controller
     }
     public function create()
     {
-        $data = $this->unitLarges->get();
+        $data = $this->untiLargesRepository->get();
         return view('admin.unit_larges.create', compact('data'));
     }
-    public function store(Request $request)
+    public function store(UnitLargesRequest $request)
     {
 
-        $data = $request->validate([
-            'name' => 'required|string|max:255|unique:unitLargess,name',
-        ]);
-
         try {
-            $this->unitLarges->store($data);
-            return redirect()->route('unit_larges.index')->with('success', 'Satuan Besar berhasil dibuat.');
-        } catch (\Throwable $th) {
-            return redirect()->route('error', 'Satuan Besar gagal dibuat: ' . $th->getMessage());
+            $this->untiLargesRepository->store($request->validated());
+            return redirect()
+                ->route('unit_larges.index')
+                ->with('success', 'Satuan Besar berhasil dibuat.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('unit_larges.create')
+                ->with('error', 'Satuan Besar gagal dibuat: ' . $e->getMessage());
         }
     }
 
     public function show($id)
     {
-        $data = $this->unitLarges->show($id);
+        $data = $this->untiLargesRepository->getById($id);
         return view('admin.unit_larges.detail', compact('data'));
     }
     public function edit($id)
     {
-        $data = $this->unitLarges->getById($id);
+        $data = $this->untiLargesRepository->getById($id);
         return view('admin.unit_larges.edit', compact('data'));
     }
 
-    public function update(Request $request, $id)
+    public function update($id, UnitLargesRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255|unique:unitLargess,name,' . $id,
-        ]);
 
         try {
-            $this->unitLarges->update($id, $data);
-            return redirect()->route('unit_larges.index')->with('success', 'Satuan Besar berhasil diperbarui.');
-        } catch (\Throwable $th) {
-            return redirect()->route('error', 'Satuan Besar gagal diperbarui: ' . $th->getMessage());
+            $this->untiLargesRepository->update($id, $request->validated());
+            return redirect()
+                ->route('unit_larges.index')
+                ->with('success', 'Satuan Besar berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('unit_larges.edit', $id)
+                ->with('error', 'Satuan Besar gagal diperbarui: ' . $e->getMessage());
         }
     }
 
@@ -79,10 +84,14 @@ class UnitLargesController extends Controller
     {
 
         try {
-            $this->unitLarges->delete($id);
-            return redirect()->route('unit_larges.index')->with('success', 'Satuan Besar berhasil dihapus.');
-        } catch (\Throwable $th) {
-            return redirect()->route('error', 'Satuan Besar gagal dihapus: ' . $th->getMessage());
+            $this->untiLargesRepository->delete($id);
+            return redirect()
+                ->route('unit_larges.index')
+                ->with('success', 'Satuan Besar berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('unit_larges.index')
+                ->with('error', 'Satuan Besar gagal dihapus: ' . $e->getMessage());
         }
     }
 }

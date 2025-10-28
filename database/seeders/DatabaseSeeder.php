@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             CategoriesSeeder::class,
             UnitLargesSeeder::class,
             UnitSmallsSeeder::class,
+            SuppliersSeeder::class,
+            BranchesSeeder::class,
         ]);
     }
 }

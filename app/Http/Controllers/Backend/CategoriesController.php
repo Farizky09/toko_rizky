@@ -65,7 +65,6 @@ class CategoriesController extends Controller
     public function update($id, CategoryRequest $request)
     {
 
-
         try {
             $this->categoriesRepository->update($id, $request->validated());
             return redirect()
