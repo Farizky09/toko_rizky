@@ -23,8 +23,17 @@ class BranchesController extends Controller
                 ->addColumn('name', function ($data) {
                     return $data->name;
                 })
-                ->addColumn('abbreviation', function ($data) {
-                    return $data->abbreviation;
+                ->addColumn('code', function ($data) {
+                    return $data->code;
+                })
+                ->addColumn('city', function ($data) {
+                    return $data->city;
+                })
+                ->addColumn('province', function ($data) {
+                    return $data->province;
+                })
+                ->addColumn('status', function ($data) {
+                    return $data->status;
                 })
                 ->addColumn('action', function ($data) {
                     return view('admin.branches.column.action', compact('data'));

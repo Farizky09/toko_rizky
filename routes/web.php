@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backend\BranchesController;
 use App\Http\Controllers\Backend\CategoriesController;
+use App\Http\Controllers\Backend\LocationsController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\SuppliersController;
@@ -95,6 +96,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/edit/{id}', [BranchesController::class, 'edit'])->middleware('permission:update_branches')->name('edit');
             Route::put('/update/{id}', [BranchesController::class, 'update'])->middleware('permission:update_branches')->name('update');
             Route::delete('/delete/{id}', [BranchesController::class, 'delete'])->middleware('permission:delete_branches')->name('delete');
+        });
+        Route::prefix('locations')->name('locations.')->group(function () {
+            Route::get('/', [LocationsController::class, 'index'])->middleware('permission:read_locations')->name('index');
+            Route::get('/create', [LocationsController::class, 'create'])->middleware('permission:create_locations')->name('create');
+            Route::post('/store', [LocationsController::class, 'store'])->middleware('permission:create_locations')->name('store');
+            Route::get('/show/{id}', [LocationsController::class, 'show'])->middleware('permission:read_locations')->name('show');
+            Route::get('/edit/{id}', [LocationsController::class, 'edit'])->middleware('permission:update_locations')->name('edit');
+            Route::put('/update/{id}', [LocationsController::class, 'update'])->middleware('permission:update_locations')->name('update');
+            Route::delete('/delete/{id}', [LocationsController::class, 'delete'])->middleware('permission:delete_locations')->name('delete');
         });
     });
     Route::prefix('owner')->name('owner.')->middleware(['role:owner|admin'])->group(function () {});

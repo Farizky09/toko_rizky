@@ -20,4 +20,9 @@ class Branches extends Model
         'phone',
         'status',
     ];
+
+    public function locations()
+    {
+        return $this->hasMany(Locations::class);
+    }
 }

@@ -56,6 +56,10 @@ class RoleSeeder extends Seeder
             'create_branches',
             'update_branches',
             'delete_branches',
+            'read_locations',
+            'create_locations',
+            'update_locations',
+            'delete_locations',
         ];
 
 

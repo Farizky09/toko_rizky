@@ -59,7 +59,7 @@
         </div>
 
         <!-- Dropdown People -->
-        <div x-data="{ open: {{ request()->routeIs(['suppliers.*', 'branches.*', 'stock-staff.*', 'customer.*']) ? 'true' : 'false' }} }" class="space-y-1">
+        <div x-data="{ open: {{ request()->routeIs(['suppliers.*', 'branches.*', 'stock-staff.*', 'customer.*', 'locations.*']) ? 'true' : 'false' }} }" class="space-y-1">
             <button @click="open = !open"
                 class="flex w-full items-center justify-between gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
                 {{ request()->routeIs(['suppliers.*', 'branches.*', 'stock-staff.*', 'customer.*']) ? 'bg-green-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}">
@@ -81,6 +81,12 @@
                     {{ request()->routeIs('branches.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
                     <span class="mdi mdi-cash-register text-lg"></span>
                     Cabang
+                </a>
+                <a href="{{ route('locations.index') }}"
+                    class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors
+                    {{ request()->routeIs('locations.index*') ? 'bg-gray-100 text-green-700' : 'text-gray-500 hover:text-gray-800' }}">
+                    <span class="mdi mdi-cash-register text-lg"></span>
+                    Lokasi
                 </a>
                 {{-- <a href="{{ route('stock-staff.index') }}"
                     class="flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors

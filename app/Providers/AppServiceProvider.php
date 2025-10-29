@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Interfaces\UnitSmallsInterfaces::class, \App\Repositories\UnitSmallsRepository::class);
         $this->app->bind(\App\Interfaces\SuppliersInterfaces::class, \App\Repositories\SuppliersRepository::class);
         $this->app->bind(\App\Interfaces\BranchesInterfaces::class, \App\Repositories\BranchesRepository::class);
+        $this->app->bind(\App\Interfaces\LocationsInterfaces::class, \App\Repositories\LocationsRepository::class);
     }
 
     /**
