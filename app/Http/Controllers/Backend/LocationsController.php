@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LocationsRequest;
-// use App\Http\Requests\locationsRequest;
 use App\Interfaces\LocationsInterfaces;
+use App\Models\Branches;
 use Illuminate\Http\Request;
+
 
 class LocationsController extends Controller
 {
@@ -18,6 +19,7 @@ class LocationsController extends Controller
 
     public function index(Request $request)
     {
+        // dd($this->locationsRepository->datatable());
         if ($request->ajax()) {
             $data = $this->locationsRepository->datatable();
             return datatables()->of($data)
@@ -25,8 +27,9 @@ class LocationsController extends Controller
                     return $data->name;
                 })
                 ->addColumn('type', function ($data) {
-                return $data->type === 'warehouse' ? 'Gudang' : 'Toko';
+                    return $data->type === 'warehouse' ? 'Gudang' : 'Toko';
                 })
+                
                 ->addColumn('action', function ($data) {
                     return view('admin.locations.column.action', compact('data'));
                 })
@@ -37,12 +40,11 @@ class LocationsController extends Controller
     }
     public function create()
     {
-        $data = $this->locationsRepository->get();
-        return view('admin.locations.create', compact('data'));
+        $branches = Branches::all();
+        return view('admin.locations.create', compact('branches'));
     }
     public function store(LocationsRequest $request)
     {
-
         try {
             $this->locationsRepository->store($request->validated());
             return redirect()

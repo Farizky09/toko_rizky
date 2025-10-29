@@ -60,6 +60,6 @@ class LocationsRepository implements LocationsInterfaces
 
     public function datatable()
     {
-        return $this->locations->orderBy('created_at', 'desc')->get();
+        return $this->locations->with('branch')->orderBy('created_at', 'desc')->get();
     }
 }

@@ -193,7 +193,7 @@
                         }
                     },
                     {
-                        data: 'branch_name',
+                        data: 'branch.name',
                         name: 'branch.name',
                         render: function(data, type, row) {
                             if (!data) return '-';
@@ -227,7 +227,7 @@
                         }
                     },
                     {
-                        data: 'branch_status',
+                        data: 'branch.status',
                         name: 'branch.status',
                         render: function(data) {
                             if (data == 'active') {
