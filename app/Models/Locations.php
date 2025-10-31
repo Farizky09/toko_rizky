@@ -20,4 +20,9 @@ class Locations extends Model
     {
         return $this->belongsTo(Branches::class);
     }
+
+    public function batchLocations()
+    {
+        return $this->hasMany(BatchLocations::class, 'location_id');
+    }
 }

@@ -34,4 +34,8 @@ class Products extends Model
     {
         return $this->belongsTo(UnitSmalls::class, 'unit_small_id');
     }
+    public function batches()
+    {
+        return $this->hasMany(Batches::class);
+    }
 }
