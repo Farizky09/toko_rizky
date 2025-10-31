@@ -12,4 +12,9 @@ class UnitSmalls extends Model
 
     protected $table = 'unit_smalls';
     protected $fillable = ['name', 'abbreviation'];
+
+    public function products()
+    {
+        return $this->hasMany(Products::class, 'unit_small_id');
+    }
 }

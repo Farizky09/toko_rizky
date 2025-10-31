@@ -12,4 +12,9 @@ class UnitLarges extends Model
 
     protected $table = 'unit_larges';
     protected $fillable = ['name', 'abbreviation'];
+
+    public function products()
+    {
+        return $this->hasMany(Products::class, 'unit_large_id');
+    }
 }

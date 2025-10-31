@@ -67,6 +67,12 @@ class PermissionSeeder extends Seeder
             Permission::create(['name' => 'create_locations']);
             Permission::create(['name' => 'update_locations']);
             Permission::create(['name' => 'delete_locations']);
+
+            Permission::create(['name' => 'read_products']);
+            Permission::create(['name' => 'create_products']);
+            Permission::create(['name' => 'update_products']);
+            Permission::create(['name' => 'delete_products']);
+
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         }
     }

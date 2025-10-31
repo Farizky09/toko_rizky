@@ -4,6 +4,7 @@ use App\Http\Controllers\Backend\BranchesController;
 use App\Http\Controllers\Backend\CategoriesController;
 use App\Http\Controllers\Backend\LocationsController;
 use App\Http\Controllers\Backend\PermissionController;
+use App\Http\Controllers\Backend\ProductsController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\SuppliersController;
 use App\Http\Controllers\Backend\UnitLargesController;
@@ -105,6 +106,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/edit/{id}', [LocationsController::class, 'edit'])->middleware('permission:update_locations')->name('edit');
             Route::put('/update/{id}', [LocationsController::class, 'update'])->middleware('permission:update_locations')->name('update');
             Route::delete('/delete/{id}', [LocationsController::class, 'delete'])->middleware('permission:delete_locations')->name('delete');
+        });
+        Route::prefix('products')->name('products.')->group(function () {
+            Route::get('/', [ProductsController::class, 'index'])->middleware('permission:read_products')->name('index');
+            Route::get('/create', [ProductsController::class, 'create'])->middleware('permission:create_products')->name('create');
+            Route::post('/store', [ProductsController::class, 'store'])->middleware('permission:create_products')->name('store');
+            Route::get('/show/{id}', [ProductsController::class, 'show'])->middleware('permission:read_products')->name('show');
+            Route::get('/edit/{id}', [ProductsController::class, 'edit'])->middleware('permission:update_products')->name('edit');
+            Route::put('/update/{id}', [ProductsController::class, 'update'])->middleware('permission:update_products')->name('update');
+            Route::delete('/delete/{id}', [ProductsController::class, 'delete'])->middleware('permission:delete_products')->name('delete');
         });
     });
     Route::prefix('owner')->name('owner.')->middleware(['role:owner|admin'])->group(function () {});
