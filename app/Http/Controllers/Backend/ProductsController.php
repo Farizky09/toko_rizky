@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductsRequest;
 use App\Interfaces\ProductsInterfaces;
+use App\Models\Categories;
+use App\Models\UnitLarges;
+use App\Models\UnitSmalls;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -26,15 +29,32 @@ class ProductsController extends Controller
                 ->addColumn('code', function ($data) {
                     return $data->code;
                 })
-                ->addColumn('city', function ($data) {
-                    return $data->city;
+                ->addColumn('category_name', function ($data) {
+
+                    return $data->category ? $data->category->name : '-';
                 })
-                ->addColumn('province', function ($data) {
-                    return $data->province;
+                ->addColumn('unitLarge_name', function ($data) {
+                    return $data->unitLarge ? $data->unitLarge->name : '-';
+                })
+                ->addColumn('unitLarge_abbreviation', function ($data) {
+                    return $data->unitLarge ? $data->unitLarge->abbreviation : '-';
+                })
+                ->addColumn('unitSmall_name', function ($data) {
+                    return $data->unitSmall ? $data->unitSmall->name : '-';
+                })
+                ->addColumn('unitSmall_abbreviation', function ($data) {
+                    return $data->unitSmall ? $data->unitSmall->abbreviation : '-';
+                })
+                ->addColumn('conversion', function ($data) {
+                    return $data->conversion ?? '0';
+                })
+                ->addColumn('min_stock', function ($data) {
+                    return $data->min_stock ?? '0';
                 })
                 ->addColumn('status', function ($data) {
-                    return $data->status;
+                    return $data->status ?? 'active';
                 })
+
                 ->addColumn('action', function ($data) {
                     return view('admin.products.column.action', compact('data'));
                 })
@@ -45,8 +65,10 @@ class ProductsController extends Controller
     }
     public function create()
     {
-        $data = $this->productsRepository->get();
-        return view('admin.products.create', compact('data'));
+        $categories = Categories::all();
+        $unitLarge = UnitLarges::all();
+        $unitSmall = UnitSmalls::all();
+        return view('admin.products.create', compact('categories', 'unitLarge', 'unitSmall'));
     }
     public function store(ProductsRequest $request)
     {
@@ -71,7 +93,10 @@ class ProductsController extends Controller
     public function edit($id)
     {
         $data = $this->productsRepository->getById($id);
-        return view('admin.products.edit', compact('data'));
+        $categories = Categories::all();
+        $unitLarge = UnitLarges::all();
+        $unitSmall = UnitSmalls::all();
+        return view('admin.products.edit',  compact('data', 'categories', 'unitLarge', 'unitSmall'));
     }
 
     public function update($id, ProductsRequest $request)

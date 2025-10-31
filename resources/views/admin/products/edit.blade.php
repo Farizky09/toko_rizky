@@ -147,7 +147,7 @@
                                         class="form-control form-control-lg select2 @error('unit_large_id') is-invalid @enderror"
                                         required>
                                         <option value="">Pilih Satuan Besar</option>
-                                        @foreach ($unitLarges as $unit)
+                                        @foreach ($unitLarge as $unit)
                                             <option value="{{ $unit->id }}"
                                                 {{ old('unit_large_id', $data->unit_large_id) == $unit->id ? 'selected' : '' }}>
                                                 {{ $unit->name }} ({{ $unit->abbreviation }})
@@ -171,7 +171,7 @@
                                         class="form-control form-control-lg select2 @error('unit_small_id') is-invalid @enderror"
                                         required>
                                         <option value="">Pilih Satuan Kecil</option>
-                                        @foreach ($unitSmalls as $unit)
+                                        @foreach ($unitSmall as $unit)
                                             <option value="{{ $unit->id }}"
                                                 {{ old('unit_small_id', $data->unit_small_id) == $unit->id ? 'selected' : '' }}>
                                                 {{ $unit->name }} ({{ $unit->abbreviation }})

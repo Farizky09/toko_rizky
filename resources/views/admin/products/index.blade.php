@@ -178,6 +178,8 @@
         $(document).ready(function() {
             $('#adminTable').DataTable({
                 responsive: true,
+                processing: true,
+                serverSide: true,
                 ajax: {
                     url: '{{ route('products.index') }}',
                     type: 'GET'
@@ -185,16 +187,18 @@
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'code',
                         name: 'code',
                         render: function(data, type, row) {
                             return `<div class="flex items-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        ${data}
-                                    </span>
-                                </div>`;
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    ${data || '-'}
+                                </span>
+                            </div>`;
                         }
                     },
                     {
@@ -202,47 +206,59 @@
                         name: 'name',
                         render: function(data, type, row) {
                             return `<div class="flex items-center">
-                                    <span class="mdi mdi-package-variant mr-3 text-lg text-blue-600"></span>
-                                    <div>
-                                        <div class="font-medium text-gray-900">${data}</div>
-                                        <div class="text-sm text-gray-500">${row.description ? row.description.substring(0, 50) + '...' : 'Tidak ada deskripsi'}</div>
-                                    </div>
-                                </div>`;
+                                <span class="mdi mdi-package-variant mr-3 text-lg text-blue-600"></span>
+                                <div>
+                                    <div class="font-medium text-gray-900">${data || '-'}</div>
+                                    <div class="text-sm text-gray-500">${row.description ? (row.description.length > 50 ? row.description.substring(0, 50) + '...' : row.description) : 'Tidak ada deskripsi'}</div>
+                                </div>
+                            </div>`;
                         }
                     },
                     {
-                        data: 'category.name',
-                        name: 'category.name',
+                        data: 'category_name',
+                        name: 'category.name', // Sesuaikan dengan nama relasi di database
                         render: function(data) {
-                            if (!data) return '-';
+                            if (!data || data === '-') return '-';
                             return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    ${data}
-                                </span>`;
+                                ${data}
+                            </span>`;
                         }
                     },
                     {
-                        data: 'unit.name',
-                        name: 'unit.name',
+                        data: 'unitLarge_name',
+                        name: 'unitLarge.name', // Sesuaikan dengan nama relasi di database
                         render: function(data, type, row) {
-                            if (!row.unit_large_name || !row.unit_small_name) return '-';
+                            if (!data || data === '-') return '-';
+
+                            const unitLargeAbbr = row.unitLarge_abbreviation || '-';
+                            const unitSmallName = row.unitSmall_name || '-';
+                            const unitSmallAbbr = row.unitSmall_abbreviation || '-';
+                            const conversion = row.conversion || '0';
+
                             return `<div class="text-sm">
-                                    <div class="font-medium">${row.unit_large_name} (${row.unit_large_abbreviation})</div>
-                                    <div class="text-gray-500">1 ${row.unit_large_abbreviation} = ${row.conversion} ${row.unit_small_abbreviation}</div>
-                                </div>`;
+                                <div class="font-medium text-gray-900">${data} (${unitLargeAbbr})</div>
+                                <div class="text-gray-500">${unitSmallName} (${unitSmallAbbr})</div>
+                            </div>`;
                         }
                     },
                     {
                         data: 'conversion',
                         name: 'conversion',
                         render: function(data) {
-                            return `<span class="font-mono font-medium">${parseFloat(data).toLocaleString('id-ID')}</span>`;
+                            return `<div class="text-center">
+                                <span class="font-mono font-medium text-gray-900">${parseFloat(data || 0).toLocaleString('id-ID')}</span>
+                                <div class="text-xs text-gray-500">konversi</div>
+                            </div>`;
                         }
                     },
                     {
                         data: 'min_stock',
                         name: 'min_stock',
                         render: function(data) {
-                            return `<span class="font-mono font-medium">${parseInt(data).toLocaleString('id-ID')}</span>`;
+                            return `<div class="text-center">
+                                <span class="font-mono font-medium text-gray-900">${parseInt(data || 0).toLocaleString('id-ID')}</span>
+                                <div class="text-xs text-gray-500">minimal</div>
+                            </div>`;
                         }
                     },
                     {
@@ -251,14 +267,14 @@
                         render: function(data) {
                             if (data === 'active') {
                                 return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        <span class="mdi mdi-check-circle text-green-500"></span>
-                                        Aktif
-                                    </span>`;
+                                    <span class="mdi mdi-check-circle text-green-500"></span>
+                                    Aktif
+                                </span>`;
                             } else {
                                 return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        <span class="mdi mdi-close-circle text-red-500"></span>
-                                        Nonaktif
-                                    </span>`;
+                                    <span class="mdi mdi-close-circle text-red-500"></span>
+                                    Nonaktif
+                                </span>`;
                             }
                         }
                     },
@@ -279,22 +295,40 @@
             const table = $('#adminTable').DataTable();
             const totalRecords = table.page.info().recordsTotal;
 
-            // In a real application, you would get these counts from the server
-            $('#totalProducts').text(totalRecords);
-            $('#activeProducts').text(totalRecords); // Assuming all are active for demo
-            $('#inactiveProducts').text('0'); // Assuming none are inactive for demo
+            // Hitung status aktif/nonaktif dari data yang terlihat
+            let activeCount = 0;
+            let inactiveCount = 0;
+
+            table.rows({
+                search: 'applied'
+            }).every(function() {
+                const rowData = this.data();
+                if (rowData.status === 'active') {
+                    activeCount++;
+                } else {
+                    inactiveCount++;
+                }
+            });
+
+            $('#totalProducts').text(totalRecords.toLocaleString('id-ID'));
+            $('#activeProducts').text(activeCount.toLocaleString('id-ID'));
+            $('#inactiveProducts').text(inactiveCount.toLocaleString('id-ID'));
 
             const now = new Date();
             $('#lastUpdated').text(now.toLocaleTimeString('id-ID', {
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
+                second: '2-digit'
             }));
         }
 
         function refreshData() {
             const table = $('#adminTable').DataTable();
             table.ajax.reload(null, false);
-            updateStats();
+
+            // Tunggu sebentar untuk update stats setelah reload
+            setTimeout(updateStats, 500);
+
             Alert.info('Data berhasil diperbarui');
         }
 
