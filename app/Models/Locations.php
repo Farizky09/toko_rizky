@@ -25,4 +25,8 @@ class Locations extends Model
     {
         return $this->hasMany(BatchLocations::class, 'location_id');
     }
+    public function purchases()
+    {
+        return $this->hasMany(Purchases::class);
+    }
 }

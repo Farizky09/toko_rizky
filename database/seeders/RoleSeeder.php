@@ -64,6 +64,10 @@ class RoleSeeder extends Seeder
             'create_products',
             'update_products',
             'delete_products',
+            'read_purchases',
+            'create_purchases',
+            'update_purchases',
+            'delete_purchases',
         ];
 
 

@@ -29,10 +29,22 @@ return new class extends Migration
             $table->enum('status', ['draft', 'completed', 'cancelled'])->default('draft');
             $table->text('notes')->nullable();
 
-            $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
-            $table->foreign('location_id')->references('id')->on('locations')->onDelete('cascade');
-            $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('branch_id')
+                ->references('id')
+                ->on('branches')
+                ->onDelete('cascade');
+            $table->foreign('location_id')
+                ->references('id')
+                ->on('locations')
+                ->onDelete('cascade');
+            $table->foreign('supplier_id')
+                ->references('id')
+                ->on('suppliers')
+                ->onDelete('cascade');
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

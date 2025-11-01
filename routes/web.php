@@ -5,6 +5,7 @@ use App\Http\Controllers\Backend\CategoriesController;
 use App\Http\Controllers\Backend\LocationsController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\ProductsController;
+use App\Http\Controllers\Backend\PurchasesController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\SuppliersController;
 use App\Http\Controllers\Backend\UnitLargesController;
@@ -115,6 +116,16 @@ Route::middleware('auth')->group(function () {
             Route::get('/edit/{id}', [ProductsController::class, 'edit'])->middleware('permission:update_products')->name('edit');
             Route::put('/update/{id}', [ProductsController::class, 'update'])->middleware('permission:update_products')->name('update');
             Route::delete('/delete/{id}', [ProductsController::class, 'delete'])->middleware('permission:delete_products')->name('delete');
+        });
+
+        Route::prefix('purchases')->name('purchases.')->group(function () {
+            Route::get('/', [PurchasesController::class, 'index'])->middleware('permission:read_purchases')->name('index');
+            Route::get('/create', [PurchasesController::class, 'create'])->middleware('permission:create_purchases')->name('create');
+            Route::post('/store', [PurchasesController::class, 'store'])->middleware('permission:create_purchases')->name('store');
+            Route::get('/show/{id}', [PurchasesController::class, 'show'])->middleware('permission:read_purchases')->name('show');
+            Route::get('/edit/{id}', [PurchasesController::class, 'edit'])->middleware('permission:update_purchases')->name('edit');
+            Route::put('/update/{id}', [PurchasesController::class, 'update'])->middleware('permission:update_purchases')->name('update');
+            Route::delete('/delete/{id}', [PurchasesController::class, 'delete'])->middleware('permission:delete_purchases')->name('delete');
         });
     });
     Route::prefix('owner')->name('owner.')->middleware(['role:owner|admin'])->group(function () {});

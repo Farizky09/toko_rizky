@@ -13,6 +13,24 @@ return new class extends Migration
     {
         Schema::create('purchase_items', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('purchase_id');
+            $table->unsignedBigInteger('product_id');
+            $table->decimal('purchase_price_large', 15, 2)->nullable();
+            $table->decimal('purchase_price_small', 15, 2)->nullable();
+            $table->decimal('selling_price_large', 15, 2)->nullable();
+            $table->decimal('selling_price_small', 15, 2)->nullable();
+            $table->decimal('qty_large', 15, 2)->default(0);
+            $table->decimal('qty_small', 15, 2)->default(0);
+            $table->decimal('subtotal', 15, 2)->default(0);
+
+            $table->foreign('purchase_id')
+                ->references('id')
+                ->on('purchases')
+                ->onDelete('cascade');
+            $table->foreign('product_id')
+                ->references('id')
+                ->on('products')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

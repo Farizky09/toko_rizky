@@ -25,4 +25,8 @@ class Branches extends Model
     {
         return $this->hasMany(Locations::class);
     }
+    public function purchases()
+    {
+        return $this->hasMany(Purchases::class);
+    }
 }
