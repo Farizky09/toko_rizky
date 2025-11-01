@@ -71,7 +71,7 @@
                 </div>
             </div>
 
-            <!-- Pending Purchases Card -->
+            <!-- Draft Purchases Card -->
             <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -80,23 +80,23 @@
                         </div>
                     </div>
                     <div class="ml-4 flex-1">
-                        <p class="text-sm font-medium text-gray-600">Pembelian Pending</p>
-                        <p class="text-2xl font-semibold text-gray-900" id="pendingPurchases">0</p>
+                        <p class="text-sm font-medium text-gray-600">Pembelian Draft</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="draftPurchases">0</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Total Amount Card -->
+            <!-- Recent Activity Card -->
             <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-50">
-                            <span class="mdi mdi-cash text-xl text-purple-600"></span>
+                            <span class="mdi mdi-update text-xl text-purple-600"></span>
                         </div>
                     </div>
                     <div class="ml-4 flex-1">
-                        <p class="text-sm font-medium text-gray-600">Total Nilai</p>
-                        <p class="text-2xl font-semibold text-gray-900" id="totalAmount">Rp 0</p>
+                        <p class="text-sm font-medium text-gray-600">Terakhir Diperbarui</p>
+                        <p class="text-lg font-semibold text-gray-900" id="lastUpdated">-</p>
                     </div>
                 </div>
             </div>
@@ -105,7 +105,7 @@
         <!-- Table Section -->
         <div class="space-y-4">
             <!-- Table Header Card -->
-            <div class="rounded-xl bg-gradient-to-r from-blue-50 to-cyan-50 px-6 py-4 shadow-sm">
+            <div class="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 shadow-sm">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <span class="mdi mdi-table text-blue-600 text-xl"></span>
@@ -127,11 +127,10 @@
             <!-- Table Container -->
             <div class="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-200/60">
                 <div class="p-4">
-                    <table id="purchasesTable" class="table table-striped table-bordered dt-responsive nowrap"
-                        style="width:100%">
+                    <table id="adminTable" class="table dt-responsive nowrap m-1" style="width:100%">
                         <thead>
                             <tr>
-                                <th>No</th>
+                                <th>ID</th>
                                 <th>No. Pembelian</th>
                                 <th>Supplier</th>
                                 <th>Cabang</th>
@@ -140,11 +139,11 @@
                                 <th>Total Quantity</th>
                                 <th>Total Amount</th>
                                 <th>Status</th>
-                                <th>User</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -168,126 +167,205 @@
 
 @push('scripts')
     <script>
+        @if (session('success'))
+            Alert.success("{{ session('success') }}");
+        @endif
+
         $(document).ready(function() {
-            var table = $('#purchasesTable').DataTable({
+            $('#adminTable').DataTable({
+                responsive: true,
                 processing: true,
                 serverSide: true,
-                responsive: true,
-                ajax: "{{ route('purchases.index') }}",
+                ajax: {
+                    url: '{{ route('purchases.index') }}',
+                    type: 'GET'
+                },
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                         orderable: false,
-                        searchable: false,
-                        className: 'text-center'
+                        searchable: false
                     },
                     {
                         data: 'purchase_number',
-                        name: 'purchase_number'
+                        name: 'purchase_number',
+                        render: function(data, type, row) {
+                            return `<div class="flex items-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    ${data}
+                                </span>
+                            </div>`;
+                        }
                     },
                     {
                         data: 'supplier_name',
-                        name: 'suppliers.name'
+                        name: 'supplier_name',
+                        render: function(data, type, row) {
+                            return `<div class="flex items-center">
+                                <span class="mdi mdi-truck mr-3 text-lg text-green-600"></span>
+                                <div>
+                                    <div class="font-medium text-gray-900">${data || '-'}</div>
+                                    <div class="text-sm text-gray-500">Supplier</div>
+                                </div>
+                            </div>`;
+                        }
                     },
                     {
                         data: 'branch_name',
-                        name: 'branches.name'
+                        name: 'branch_name',
+                        render: function(data, type, row) {
+                            return `<div class="flex items-center">
+                                <span class="mdi mdi-store mr-3 text-lg text-purple-600"></span>
+                                <div>
+                                    <div class="font-medium text-gray-900">${data || '-'}</div>
+                                    <div class="text-sm text-gray-500">Cabang</div>
+                                </div>
+                            </div>`;
+                        }
                     },
                     {
                         data: 'purchase_date',
                         name: 'purchase_date',
-                        className: 'text-center'
+                        render: function(data) {
+                            const date = new Date(data);
+                            const formattedDate = date.toLocaleDateString('id-ID', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                            });
+                            return `<div class="text-center">
+                                <div class="font-medium text-gray-900">${formattedDate}</div>
+                                <div class="text-xs text-gray-500">tanggal</div>
+                            </div>`;
+                        }
                     },
                     {
                         data: 'total_items',
                         name: 'total_items',
-                        className: 'text-center'
+                        render: function(data) {
+                            return `<div class="text-center">
+                                <span class="font-mono font-medium text-gray-900">${parseInt(data || 0).toLocaleString('id-ID')}</span>
+                                <div class="text-xs text-gray-500">items</div>
+                            </div>`;
+                        }
                     },
                     {
-                        data: 'total_quantity',
+                        data: null,
                         name: 'total_quantity',
-                        orderable: false,
-                        searchable: false,
-                        className: 'text-center'
+                        render: function(data, type, row) {
+                            const total = (row.total_quantity_large || 0) + (row
+                                .total_quantity_small || 0);
+                            return `<div class="text-center">
+                                <span class="font-mono font-medium text-gray-900">${parseInt(total).toLocaleString('id-ID')}</span>
+                                <div class="text-xs text-gray-500">quantity</div>
+                            </div>`;
+                        }
                     },
                     {
                         data: 'total_amount',
                         name: 'total_amount',
-                        className: 'text-right'
+                        render: function(data) {
+                            const formattedAmount = new Intl.NumberFormat('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR',
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0
+                            }).format(data || 0);
+
+                            return `<div class="text-right">
+                                <div class="font-medium text-gray-900">${formattedAmount}</div>
+                                <div class="text-xs text-gray-500">total</div>
+                            </div>`;
+                        }
                     },
                     {
                         data: 'status',
                         name: 'status',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'user_name',
-                        name: 'users.name'
+                        render: function(data) {
+                            const statusConfig = {
+                                'completed': {
+                                    class: 'bg-green-100 text-green-800',
+                                    icon: 'mdi-check-circle',
+                                    label: 'Completed'
+                                },
+                                'draft': {
+                                    class: 'bg-amber-100 text-amber-800',
+                                    icon: 'mdi-pencil',
+                                    label: 'Draft'
+                                },
+                                'cancelled': {
+                                    class: 'bg-red-100 text-red-800',
+                                    icon: 'mdi-close-circle',
+                                    label: 'Cancelled'
+                                }
+                            };
+
+                            const config = statusConfig[data] || statusConfig.draft;
+                            return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${config.class}">
+                                <span class="mdi ${config.icon}"></span>
+                                ${config.label}
+                            </span>`;
+                        }
                     },
                     {
                         data: 'action',
                         name: 'action',
                         orderable: false,
-                        searchable: false,
-                        className: 'text-center'
+                        searchable: false
                     }
                 ],
-                order: [
-                    [0, 'desc']
-                ],
-
                 drawCallback: function(settings) {
                     updateStats();
                 }
             });
+        });
 
-            function updateStats() {
-                // In real application, you would get these from API
-                // For demo purposes, we'll just show placeholders
-                $('#totalPurchases').text(table.page.info().recordsTotal);
-                $('#completedPurchases').text('-');
-                $('#pendingPurchases').text('-');
-                $('#totalAmount').text('-');
-            }
+        function updateStats() {
+            const table = $('#adminTable').DataTable();
+            const totalRecords = table.page.info().recordsTotal;
 
-            window.refreshData = function() {
-                table.ajax.reload(null, false);
-                updateStats();
+            // Hitung status dari data yang terlihat
+            let completedCount = 0;
+            let draftCount = 0;
+            let cancelledCount = 0;
 
-                // Show success message
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                });
+            table.rows({
+                search: 'applied'
+            }).every(function() {
+                const rowData = this.data();
+                if (rowData.status === 'completed') {
+                    completedCount++;
+                } else if (rowData.status === 'draft') {
+                    draftCount++;
+                } else if (rowData.status === 'cancelled') {
+                    cancelledCount++;
+                }
+            });
 
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Data berhasil diperbarui'
-                });
-            }
+            $('#totalPurchases').text(totalRecords.toLocaleString('id-ID'));
+            $('#completedPurchases').text(completedCount.toLocaleString('id-ID'));
+            $('#draftPurchases').text(draftCount.toLocaleString('id-ID'));
 
-            @if (session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: '{{ session('success') }}',
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-            @endif
+            const now = new Date();
+            $('#lastUpdated').text(now.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            }));
+        }
 
-            @if (session('error'))
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal',
-                    text: '{{ session('error') }}',
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-            @endif
+        function refreshData() {
+            const table = $('#adminTable').DataTable();
+            table.ajax.reload(null, false);
+
+
+            setTimeout(updateStats, 500);
+
+            Alert.info('Data berhasil diperbarui');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(updateStats, 1000);
         });
     </script>
 @endpush

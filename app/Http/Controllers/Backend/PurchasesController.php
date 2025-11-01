@@ -83,16 +83,19 @@ class PurchasesController extends Controller
     }
     public function store(PurchasesRequest $request)
     {
-
         try {
-            $this->purchasesRepository->store($request->validated());
+            $purchase = $this->purchasesRepository->store($request->validated());
+            dd($purchase);
+
             return redirect()
                 ->route('purchases.index')
                 ->with('success', 'Pembelian berhasil dibuat.');
         } catch (\Exception $e) {
+
             return redirect()
                 ->route('purchases.create')
-                ->with('error', 'Pembelian gagal dibuat: ' . $e->getMessage());
+                ->with('error', 'Pembelian gagal dibuat: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
@@ -104,7 +107,7 @@ class PurchasesController extends Controller
             return redirect()->route('purchases.index')->with('error', 'Data pembelian tidak ditemukan.');
         }
 
-        return view('admin.purchases.show', compact('purchase'));
+        return view('admin.purchases.detail', compact('purchase'));
     }
     public function edit($id)
     {

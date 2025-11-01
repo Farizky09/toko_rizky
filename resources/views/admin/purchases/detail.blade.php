@@ -165,9 +165,9 @@
                                             </td>
                                             <td class="text-center">{{ $item->qty_large }}</td>
                                             <td class="text-center">{{ $item->qty_small }}</td>
-                                            <td class="text-end">@currency($item->purchase_price_large)</td>
-                                            <td class="text-end">@currency($item->purchase_price_small)</td>
-                                            <td class="text-end fw-bold text-success">@currency($item->subtotal)</td>
+                                            <td class="text-end">@currency($item->purchase_price_large ?? 0)</td>
+                                            <td class="text-end">@currency($item->purchase_price_small ?? 0)</td>
+                                            <td class="text-end fw-bold text-success">@currency($item->subtotal ?? 0)</td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -329,7 +329,7 @@
     </div>
 
     <!-- Delete Form (Hidden) -->
-    <form action="{{ route('purchases.destroy', $purchase->id) }}" method="POST" id="deleteForm" class="d-none">
+    <form action="{{ route('purchases.delete', $purchase->id) }}" method="POST" id="deleteForm" class="d-none">
         @csrf
         @method('DELETE')
     </form>
@@ -365,9 +365,7 @@
 
 @push('scripts')
     <script>
-        function printPurchase() {
-            window.open('{{ route('purchases.print', $purchase->id) }}', '_blank');
-        }
+        
 
         function confirmDelete() {
             Swal.fire({

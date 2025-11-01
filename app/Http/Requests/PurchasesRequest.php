@@ -6,22 +6,13 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class PurchasesRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
-        $id = $this->route('purchase') ?? $this->route('id');
 
         return [
             'branch_id' => 'required|exists:branches,id',
@@ -30,17 +21,23 @@ class PurchasesRequest extends FormRequest
             'purchase_date' => 'required|date',
             'tax' => 'nullable|numeric|min:0',
             'discount' => 'nullable|numeric|min:0',
-            'status' => 'required|in:draft,pending,completed,cancelled',
+            'status' => 'required|in:draft,completed,cancelled',
             'notes' => 'nullable|string|max:1000',
 
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
-            'items.*.qty_large' => 'required|integer|min:0',
-            'items.*.qty_small' => 'required|integer|min:0',
-            'items.*.purchase_price_large' => 'required|numeric|min:0',
-            'items.*.purchase_price_small' => 'required|numeric|min:0',
-            'items.*.selling_price_large' => 'required|numeric|min:0',
-            'items.*.selling_price_small' => 'required|numeric|min:0',
+
+            // minimal salah satu qty harus diisi
+            'items.*.qty_large' => 'nullable|integer|min:0|required_without:items.*.qty_small',
+            'items.*.qty_small' => 'nullable|integer|min:0|required_without:items.*.qty_large',
+
+            // minimal salah satu harga beli harus diisi
+            'items.*.purchase_price_large' => 'nullable|numeric|min:0|required_without:items.*.purchase_price_small',
+            'items.*.purchase_price_small' => 'nullable|numeric|min:0|required_without:items.*.purchase_price_large',
+
+            // minimal salah satu harga jual harus diisi
+            'items.*.selling_price_large' => 'nullable|numeric|min:0|required_without:items.*.selling_price_small',
+            'items.*.selling_price_small' => 'nullable|numeric|min:0|required_without:items.*.selling_price_large',
         ];
     }
 
@@ -52,13 +49,17 @@ class PurchasesRequest extends FormRequest
             'supplier_id.required' => 'Supplier wajib dipilih',
             'purchase_date.required' => 'Tanggal pembelian wajib diisi',
             'items.required' => 'Minimal satu item harus ditambahkan',
+
             'items.*.product_id.required' => 'Produk wajib dipilih',
-            'items.*.qty_large.required' => 'Jumlah besar wajib diisi',
-            'items.*.qty_small.required' => 'Jumlah kecil wajib diisi',
-            'items.*.purchase_price_large.required' => 'Harga beli besar wajib diisi',
-            'items.*.purchase_price_small.required' => 'Harga beli kecil wajib diisi',
-            'items.*.selling_price_large.required' => 'Harga jual besar wajib diisi',
-            'items.*.selling_price_small.required' => 'Harga jual kecil wajib diisi',
+
+            'items.*.qty_large.required_without' => 'Isi jumlah besar atau jumlah kecil minimal salah satu',
+            'items.*.qty_small.required_without' => 'Isi jumlah kecil atau jumlah besar minimal salah satu',
+
+            'items.*.purchase_price_large.required_without' => 'Isi harga beli besar atau harga beli kecil minimal salah satu',
+            'items.*.purchase_price_small.required_without' => 'Isi harga beli kecil atau harga beli besar minimal salah satu',
+
+            'items.*.selling_price_large.required_without' => 'Isi harga jual besar atau harga jual kecil minimal salah satu',
+            'items.*.selling_price_small.required_without' => 'Isi harga jual kecil atau harga jual besar minimal salah satu',
         ];
     }
 
