@@ -66,7 +66,7 @@ class ProductsController extends Controller
                     return $data->stock_small ?? 0;
                 })
                 ->addColumn('total_stock_small', function ($data) {
-                    return $data->total_stock_small ?? 0;
+                    return intval($data->total_stock_small ?? 0);
                 })
                 ->addColumn('action', function ($data) {
                     return view('admin.products.column.action', compact('data'));

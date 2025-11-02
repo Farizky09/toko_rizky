@@ -202,6 +202,7 @@
                                 <th>Satuan</th>
                                 <th>Konversi</th>
                                 <th>Stok</th>
+                                <th>Total Stock (dalam satuan kecil)</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
@@ -415,6 +416,10 @@
                                 <div class="text-xs text-gray-500">stok tersedia</div>
                             </div>`;
                         }
+                    },
+                    {
+                        data: 'total_stock_small',
+                        name: 'total_stock_small'
                     },
                     {
                         data: 'status',
