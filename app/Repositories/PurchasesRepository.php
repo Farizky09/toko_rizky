@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 
 use App\Interfaces\PurchasesInterfaces;
+use App\Models\Batches;
+use App\Models\BatchLocations;
 use App\Models\Purchases;
 use App\Models\PurchasesItems;
 use Exception;
@@ -76,15 +78,12 @@ class PurchasesRepository implements PurchasesInterfaces
             try {
 
 
-                // Generate purchase number
                 $purchaseNumber = $this->generatePurchaseNumber();
 
-                // Validate required fields
                 if (!isset($data['branch_id']) || !isset($data['location_id']) || !isset($data['supplier_id'])) {
                     throw new \Exception('Required fields are missing');
                 }
 
-                // Calculate values with proper validation
                 $totalItems = count($data['items']);
                 $totalQtyLarge = collect($data['items'])->sum(function ($item) {
                     return (int) ($item['qty_large'] ?? 0);
@@ -207,26 +206,48 @@ class PurchasesRepository implements PurchasesInterfaces
             throw new \Exception('Failed to generate purchase number: ' . $e->getMessage());
         }
     }
+    private function generateBatchNumber()
+    {
+        try {
+            $date = now()->format('Ymd');
+            $lastBatch = Batches::whereDate('created_at', today())->latest()->first();
+
+            if ($lastBatch) {
+                // Ambil angka dari batch_number terakhir
+                $lastNumber = preg_replace('/[^0-9]/', '', $lastBatch->batch_number);
+                $lastFourDigits = substr($lastNumber, -4);
+                $newNumber = str_pad((int)$lastFourDigits + 1, 4, '0', STR_PAD_LEFT);
+            } else {
+                $newNumber = '0001';
+            }
+
+            $batchNumber = "BAT{$date}{$newNumber}";
+
+            return $batchNumber;
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to generate batch number: ' . $e->getMessage());
+        }
+    }
+
     private function savePurchaseItems($purchaseId, $items)
     {
-
         foreach ($items as $index => $item) {
             try {
-
                 if (!isset($item['product_id'])) {
                     throw new \Exception("Product ID is missing for item {$index}");
                 }
 
-                $qtyLarge = (int) ($item['qty_large'] ?? 0);
-                $qtySmall = (int) ($item['qty_small'] ?? 0);
+                $qtyLarge = (float) ($item['qty_large'] ?? 0);
+                $qtySmall = (float) ($item['qty_small'] ?? 0);
                 $purchasePriceLarge = (float) ($item['purchase_price_large'] ?? 0);
                 $purchasePriceSmall = (float) ($item['purchase_price_small'] ?? 0);
                 $sellingPriceLarge = (float) ($item['selling_price_large'] ?? 0);
                 $sellingPriceSmall = (float) ($item['selling_price_small'] ?? 0);
+                $expiryDate = $item['expiry_date'] ?? null;
 
                 $subtotal = ($qtyLarge * $purchasePriceLarge) + ($qtySmall * $purchasePriceSmall);
 
-                PurchasesItems::create([
+                $purchaseItem = PurchasesItems::create([
                     'purchase_id' => $purchaseId,
                     'product_id' => $item['product_id'],
                     'selling_price_small' => $sellingPriceSmall,
@@ -237,11 +258,34 @@ class PurchasesRepository implements PurchasesInterfaces
                     'purchase_price_large' => $purchasePriceLarge,
                     'subtotal' => $subtotal,
                 ]);
+
+                $batchNumber = $this->generateBatchNumber();
+
+                $batch = Batches::create([
+                    'product_id' => $purchaseItem->product_id,
+                    'batch_number' => $batchNumber,
+                    'purchase_price_large' => $purchaseItem->purchase_price_large,
+                    'purchase_price_small' => $purchaseItem->purchase_price_small,
+                    'quantity_large' => $purchaseItem->qty_large,
+                    'quantity_small' => $purchaseItem->qty_small,
+                    'selling_price_large' => $purchaseItem->selling_price_large,
+                    'selling_price_small' => $purchaseItem->selling_price_small,
+                    'expiry_date' => $expiryDate,
+                    'status' => 'active',
+                ]);
+
+                BatchLocations::create([
+                    'batch_id' => $batch->id,
+                    'location_id' => $item['location_id'] ?? 1,
+                    'quantity_large' => $batch->quantity_large,
+                    'quantity_small' => $batch->quantity_small,
+                ]);
             } catch (\Exception $e) {
                 throw new \Exception("Failed to save item {$index}: " . $e->getMessage());
             }
         }
     }
+
 
     private function calculateSubtotal($items)
     {

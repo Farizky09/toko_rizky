@@ -81,8 +81,8 @@ class ProductsSeeder extends Seeder
                 'unit_large_id' => $unitLarges[array_rand($unitLarges)],
                 'unit_small_id' => $unitSmalls[array_rand($unitSmalls)],
                 'conversion' => rand(6, 24), // contoh: 1 kardus = 12 pcs
-                'min_stock' => rand(5, 20),
-                'status' => rand(0, 1) ? 'active' : 'inactive',
+                'min_stock' => 5,
+                'status' => 'active',
                 'description' => $p[1],
             ];
             $counter++;

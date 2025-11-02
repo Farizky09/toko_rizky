@@ -124,6 +124,72 @@
                 </div>
             </div>
 
+            <!-- Filter Section -->
+            <div class="rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200/60">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
+                    <!-- Filter Lokasi -->
+                    <div>
+                        <label for="filter_location" class="block text-sm font-medium text-gray-700 mb-1">Lokasi</label>
+                        <select id="filter_location" name="filter_location"
+                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <option value="">Semua Lokasi</option>
+                            @foreach ($locations as $location)
+                                <option value="{{ $location->id }}">{{ $location->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Filter Kategori -->
+                    <div>
+                        <label for="filter_category" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                        <select id="filter_category" name="filter_category"
+                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <option value="">Semua Kategori</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Filter Status -->
+                    <div>
+                        <label for="filter_status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                        <select id="filter_status" name="filter_status"
+                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <option value="">Semua Status</option>
+                            <option value="active">Aktif</option>
+                            <option value="inactive">Nonaktif</option>
+                        </select>
+                    </div>
+
+                    <!-- Filter Satuan Kecil -->
+                    <div>
+                        <label for="filter_unit_small" class="block text-sm font-medium text-gray-700 mb-1">Satuan
+                            Kecil</label>
+                        <select id="filter_unit_small" name="filter_unit_small"
+                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <option value="">Semua Satuan Kecil</option>
+                            @foreach ($unitSmalls as $unit)
+                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Filter Satuan Besar -->
+                    <div>
+                        <label for="filter_unit_large" class="block text-sm font-medium text-gray-700 mb-1">Satuan
+                            Besar</label>
+                        <select id="filter_unit_large" name="filter_unit_large"
+                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <option value="">Semua Satuan Besar</option>
+                            @foreach ($unitLarges as $unit)
+                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <!-- Table Container -->
             <div class="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-200/60">
                 <div class="p-4">
@@ -133,10 +199,9 @@
                                 <th>ID</th>
                                 <th>Kode</th>
                                 <th>Nama Produk</th>
-                                <th>Kategori</th>
                                 <th>Satuan</th>
                                 <th>Konversi</th>
-                                <th>Stok Min</th>
+                                <th>Stok</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
@@ -162,6 +227,85 @@
             </div>
         </div>
     </main>
+
+    <!-- Modal Detail Produk -->
+    <div id="productDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+
+            <!-- Modal panel -->
+            <div
+                class="relative inline-block w-full max-w-2xl px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
+                <!-- Header -->
+                <div class="flex items-center justify-between pb-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">Detail Produk</h3>
+                    <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                        <span class="mdi mdi-close text-xl"></span>
+                    </button>
+                </div>
+
+                <!-- Body -->
+                <div class="mt-4 space-y-4">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Kode Produk</label>
+                                <p class="mt-1 text-sm text-gray-900" id="detailCode">-</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Nama Produk</label>
+                                <p class="mt-1 text-sm text-gray-900" id="detailName">-</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Kategori</label>
+                                <p class="mt-1 text-sm text-gray-900" id="detailCategory">-</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Satuan Besar</label>
+                                <p class="mt-1 text-sm text-gray-900" id="detailUnitLarge">-</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Satuan Kecil</label>
+                                <p class="mt-1 text-sm text-gray-900" id="detailUnitSmall">-</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Konversi</label>
+                                <p class="mt-1 text-sm text-gray-900" id="detailConversion">-</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Stok Minimal</label>
+                                <p class="mt-1 text-sm text-gray-900" id="detailMinStock">-</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Status</label>
+                                <p class="mt-1">
+                                    <span id="detailStatus"
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        -
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Deskripsi</label>
+                        <p class="mt-1 text-sm text-gray-900" id="detailDescription">-</p>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="mt-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" onclick="closeModal()"
+                        class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('styles')
@@ -175,14 +319,29 @@
             Alert.success("{{ session('success') }}");
         @endif
 
+        let productDetailModal = null;
+
         $(document).ready(function() {
-            $('#adminTable').DataTable({
+            // Initialize Select2
+            $('select').select2();
+
+            // Initialize modal
+            productDetailModal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+
+            const table = $('#adminTable').DataTable({
                 responsive: true,
                 processing: true,
                 serverSide: true,
                 ajax: {
                     url: '{{ route('products.index') }}',
-                    type: 'GET'
+                    type: 'GET',
+                    data: function(d) {
+                        d.location_id = $('#filter_location').val();
+                        d.category_id = $('#filter_category').val();
+                        d.status = $('#filter_status').val();
+                        d.unit_small_id = $('#filter_unit_small').val();
+                        d.unit_large_id = $('#filter_unit_large').val();
+                    }
                 },
                 columns: [{
                         data: 'DT_RowIndex',
@@ -215,25 +374,14 @@
                         }
                     },
                     {
-                        data: 'category_name',
-                        name: 'category.name', // Sesuaikan dengan nama relasi di database
-                        render: function(data) {
-                            if (!data || data === '-') return '-';
-                            return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                ${data}
-                            </span>`;
-                        }
-                    },
-                    {
                         data: 'unitLarge_name',
-                        name: 'unitLarge.name', // Sesuaikan dengan nama relasi di database
+                        name: 'unitLarge.name',
                         render: function(data, type, row) {
                             if (!data || data === '-') return '-';
 
                             const unitLargeAbbr = row.unitLarge_abbreviation || '-';
                             const unitSmallName = row.unitSmall_name || '-';
                             const unitSmallAbbr = row.unitSmall_abbreviation || '-';
-                            const conversion = row.conversion || '0';
 
                             return `<div class="text-sm">
                                 <div class="font-medium text-gray-900">${data} (${unitLargeAbbr})</div>
@@ -252,12 +400,19 @@
                         }
                     },
                     {
-                        data: 'min_stock',
-                        name: 'min_stock',
-                        render: function(data) {
+                        data: 'stock_large',
+                        name: 'stock_large',
+                        render: function(data, type, row) {
+                            const stockLarge = data || 0;
+                            const stockSmall = row.stock_small || 0;
+                            const unitLargeAbbr = row.unitLarge_abbreviation || '';
+                            const unitSmallAbbr = row.unitSmall_abbreviation || '';
+
                             return `<div class="text-center">
-                                <span class="font-mono font-medium text-gray-900">${parseInt(data || 0).toLocaleString('id-ID')}</span>
-                                <div class="text-xs text-gray-500">minimal</div>
+                                <span class="font-mono font-medium text-gray-900">
+                                    ${parseInt(stockLarge).toLocaleString('id-ID')}${unitLargeAbbr} / ${parseInt(stockSmall).toLocaleString('id-ID')}${unitSmallAbbr}
+                                </span>
+                                <div class="text-xs text-gray-500">stok tersedia</div>
                             </div>`;
                         }
                     },
@@ -282,20 +437,114 @@
                         data: 'action',
                         name: 'action',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        render: function(data, type, row) {
+                            return `
+                                <div class="flex items-center gap-2">
+                                    <button class="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-blue-700 transition-all duration-200 hover:bg-blue-100 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 detail-btn" data-id="${row.id}">
+                                        <span class="mdi mdi-information-outline text-base"></span>
+                                        Detail
+                                    </button>
+                                    ${data}
+                                </div>
+                            `;
+                        }
                     }
                 ],
                 drawCallback: function(settings) {
                     updateStats();
                 }
             });
+
+            // Event listeners for filters
+            $('#filter_location, #filter_category, #filter_status, #filter_unit_small, #filter_unit_large').change(
+                function() {
+                    table.ajax.reload();
+                });
+
+            // Detail button click event
+            $('#adminTable tbody').on('click', '.detail-btn', function() {
+                var productId = $(this).data('id');
+                showProductDetail(productId);
+            });
         });
+
+        function showProductDetail(productId) {
+            // Show loading state
+            $('#detailCode').text('Loading...');
+            $('#detailName').text('Loading...');
+            $('#detailCategory').text('Loading...');
+            $('#detailUnitLarge').text('Loading...');
+            $('#detailUnitSmall').text('Loading...');
+            $('#detailConversion').text('Loading...');
+            $('#detailMinStock').text('Loading...');
+            $('#detailStatus').text('Loading...');
+            $('#detailDescription').text('Loading...');
+
+            $.ajax({
+                url: '{{ route('products.show', ':id') }}'.replace(':id', productId),
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        const data = response.data;
+
+                        $('#detailCode').text(data.code || '-');
+                        $('#detailName').text(data.name || '-');
+                        $('#detailCategory').text(data.category_name || '-');
+                        $('#detailUnitLarge').text((data.unitLarge_name || '-') + ' (' + (data
+                            .unitLarge_abbreviation || '-') + ')');
+                        $('#detailUnitSmall').text((data.unitSmall_name || '-') + ' (' + (data
+                            .unitSmall_abbreviation || '-') + ')');
+                        $('#detailConversion').text(parseFloat(data.conversion || 0).toLocaleString('id-ID'));
+                        $('#detailMinStock').text(parseInt(data.min_stock || 0).toLocaleString('id-ID'));
+
+                        // Update status dengan styling
+                        const statusElement = $('#detailStatus');
+                        statusElement.removeClass(
+                            'bg-gray-100 text-gray-800 bg-green-100 text-green-800 bg-red-100 text-red-800');
+                        if (data.status === 'active') {
+                            statusElement.addClass('bg-green-100 text-green-800').text('Aktif');
+                        } else {
+                            statusElement.addClass('bg-red-100 text-red-800').text('Nonaktif');
+                        }
+
+                        $('#detailDescription').text(data.description || 'Tidak ada deskripsi');
+
+                        // Show modal
+                        productDetailModal.show();
+                    } else {
+                        Alert.error(response.message || 'Gagal memuat detail produk.');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr);
+                    Alert.error('Gagal memuat detail produk.');
+
+                    $('#detailCode').text('-');
+                    $('#detailName').text('-');
+                    $('#detailCategory').text('-');
+                    $('#detailUnitLarge').text('-');
+                    $('#detailUnitSmall').text('-');
+                    $('#detailConversion').text('-');
+                    $('#detailMinStock').text('-');
+                    $('#detailStatus').text('-').removeClass().addClass(
+                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800'
+                    );
+                    $('#detailDescription').text('-');
+                }
+            });
+        }
+
+        function closeModal() {
+            if (productDetailModal) {
+                productDetailModal.hide();
+            }
+        }
 
         function updateStats() {
             const table = $('#adminTable').DataTable();
             const totalRecords = table.page.info().recordsTotal;
 
-            // Hitung status aktif/nonaktif dari data yang terlihat
             let activeCount = 0;
             let inactiveCount = 0;
 
@@ -326,9 +575,7 @@
             const table = $('#adminTable').DataTable();
             table.ajax.reload(null, false);
 
-            // Tunggu sebentar untuk update stats setelah reload
             setTimeout(updateStats, 500);
-
             Alert.info('Data berhasil diperbarui');
         }
 
