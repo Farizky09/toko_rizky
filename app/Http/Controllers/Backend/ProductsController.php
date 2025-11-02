@@ -25,7 +25,7 @@ class ProductsController extends Controller
 
         // dd($this->productsRepository->datatable2()->get());
         if ($request->ajax()) {
-            $data = $this->productsRepository->datatable2();
+            $data = $this->productsRepository->datatable();
 
             return datatables()->of($data)
                 ->addIndexColumn()

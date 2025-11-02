@@ -116,7 +116,7 @@ class PurchasesRepository implements PurchasesInterfaces
                     'notes' => $data['notes'] ?? null,
                 ]);
 
-                $this->savePurchaseItems($purchase->id, $data['items']);
+                $this->savePurchaseItems($purchase, $data['items']);
 
                 return $purchase;
             } catch (\Exception $e) {
@@ -229,7 +229,7 @@ class PurchasesRepository implements PurchasesInterfaces
         }
     }
 
-    private function savePurchaseItems($purchaseId, $items)
+    private function savePurchaseItems($purchase, $items)
     {
         foreach ($items as $index => $item) {
             try {
@@ -248,7 +248,7 @@ class PurchasesRepository implements PurchasesInterfaces
                 $subtotal = ($qtyLarge * $purchasePriceLarge) + ($qtySmall * $purchasePriceSmall);
 
                 $purchaseItem = PurchasesItems::create([
-                    'purchase_id' => $purchaseId,
+                    'purchase_id' => $purchase->id,
                     'product_id' => $item['product_id'],
                     'selling_price_small' => $sellingPriceSmall,
                     'selling_price_large' => $sellingPriceLarge,
@@ -273,10 +273,10 @@ class PurchasesRepository implements PurchasesInterfaces
                     'expiry_date' => $expiryDate,
                     'status' => 'active',
                 ]);
-
+                // $lcoations = $purchaseItem->purchases->location_id;
                 BatchLocations::create([
                     'batch_id' => $batch->id,
-                    'location_id' => $item['location_id'] ?? 1,
+                    'location_id' => $purchase->location_id,
                     'quantity_large' => $batch->quantity_large,
                     'quantity_small' => $batch->quantity_small,
                 ]);

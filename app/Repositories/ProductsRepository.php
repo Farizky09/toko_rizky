@@ -58,13 +58,10 @@ class ProductsRepository implements ProductsInterfaces
         });
     }
 
+
     public function datatable()
     {
-        return $this->products->orderBy('created_at', 'desc')->get();
-    }
-
-    public function datatable2()
-    {
+        $locationId = request('location_id');
         return DB::table('products')
             ->join('categories', 'categories.id', '=', 'products.category_id')
             ->join('unit_larges', 'unit_larges.id', '=', 'products.unit_large_id')
@@ -87,15 +84,12 @@ class ProductsRepository implements ProductsInterfaces
                 'unit_smalls.name as unitSmall_name',
                 'unit_smalls.abbreviation as unitSmall_abbreviation',
 
-                DB::raw('COALESCE(SUM(batch_locations.quantity_large), 0) as stock_large'),
+                DB::raw('COALESCE(SUM(CASE WHEN ' . ($locationId ? "locations.id = {$locationId}" : '1=1') . ' THEN batch_locations.quantity_large ELSE 0 END), 0) as stock_large'),
 
-                DB::raw('COALESCE(SUM(batch_locations.quantity_small), 0) as stock_small'),
+                DB::raw('COALESCE(SUM(CASE WHEN ' . ($locationId ? "locations.id = {$locationId}" : '1=1') . ' THEN batch_locations.quantity_small ELSE 0 END), 0) as stock_small'),
 
-                DB::raw('COALESCE(SUM(batch_locations.quantity_large * products.conversion + batch_locations.quantity_small), 0) as total_stock_small')
+                DB::raw('COALESCE(SUM(CASE WHEN ' . ($locationId ? "locations.id = {$locationId}" : '1=1') . ' THEN (batch_locations.quantity_large * products.conversion + batch_locations.quantity_small) ELSE 0 END), 0) as total_stock_small')
             )
-            ->when(request('location_id'), function ($query) {
-                return $query->where('locations.id', request('location_id'));
-            })
             ->when(request('category_id'), function ($query) {
                 return $query->where('products.category_id', request('category_id'));
             })

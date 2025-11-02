@@ -85,7 +85,7 @@ class PurchasesController extends Controller
     {
         try {
             $purchase = $this->purchasesRepository->store($request->validated());
-            dd($purchase);
+            // dd($purchase);
 
             return redirect()
                 ->route('purchases.index')
