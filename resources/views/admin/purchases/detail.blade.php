@@ -155,12 +155,14 @@
                                         @forelse(($purchase->purchasesItems ?? []) as $index => $item)
                                             <tr>
                                                 <td class="text-center">{{ $index + 1 }}</td>
+
                                                 <td>
-                                                    <!-- PERBAIKAN: Menggunakan $item->product->name -->
-                                                    <div class="fw-semibold">{{ $item->product->name ?? 'Produk Dihapus' }}
+                                                    {{-- @dump($item); --}}
+
+                                                    <div class="fw-semibold">{{ $item->product_name ?? 'Produk Dihapus' }}
                                                     </div>
                                                     <small class="text-muted">Kode:
-                                                        {{ $item->product->code ?? '-' }}</small>
+                                                        {{ $item->product_code ?? '-' }}</small>
                                                 </td>
                                                 <td class="text-center">{{ (float) $item->qty_large }} /
                                                     {{ (float) $item->qty_small }}</td>
@@ -196,10 +198,10 @@
                                                 <td class="text-center">{{ $index + 1 }}</td>
                                                 <td>
                                                     <!-- PERBAIKAN: Menggunakan $item->product->name -->
-                                                    <div class="fw-semibold">{{ $item->product->name ?? 'Produk Dihapus' }}
+                                                    <div class="fw-semibold">{{ $item->product_name ?? 'Produk Dihapus' }}
                                                     </div>
                                                     <small class="text-muted">Kode:
-                                                        {{ $item->product->code ?? '-' }}</small>
+                                                        {{ $item->product_code ?? '-' }}</small>
                                                 </td>
                                                 <td class="text-center">{{ (float) $item->qty_large }}</td>
                                                 <td class="text-center">{{ (float) $item->qty_small }}</td>
@@ -310,7 +312,7 @@
                                     <p class="text-muted small mb-0">
                                         {{ \Carbon\Carbon::parse($purchase->created_at)->translatedFormat('d F Y H:i') }}
                                     </p>
-                                    <p class="small mb-0">Oleh: {{ $purchase->user->name ?? 'System' }}</p>
+                                    <p class="small mb-0">Oleh: {{ $purchase->user_name ?? 'System' }}</p>
                                 </div>
                             </div>
 

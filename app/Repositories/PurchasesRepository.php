@@ -55,18 +55,20 @@ class PurchasesRepository implements PurchasesInterfaces
             ->leftJoin('users', 'purchases.user_id', '=', 'users.id')
             ->where('purchases.id', $id)
             ->first();
-
-        if ($purchase) {
-            $purchase->purchasesItems = DB::table('purchase_items')
-                ->select(
-                    'purchase_items.*',
-                    'products.name as product_name',
-                    'products.code as product_code'
-                )
-                ->leftJoin('products', 'purchase_items.product_id', '=', 'products.id')
-                ->where('purchase_items.purchase_id', $id)
-                ->get();
+        if (!$purchase) {
+            abort(404, 'Purchase tidak ditemukan');
         }
+
+        $purchase->purchasesItems = DB::table('purchase_items')
+            ->select(
+                'purchase_items.*',
+                'products.name as product_name',
+                'products.code as product_code'
+            )
+            ->leftJoin('products', 'purchase_items.product_id', '=', 'products.id')
+            ->where('purchase_items.purchase_id', $id)
+            ->get();
+
 
         return $purchase;
     }

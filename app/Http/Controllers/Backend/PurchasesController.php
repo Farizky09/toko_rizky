@@ -118,6 +118,7 @@ class PurchasesController extends Controller
     public function show($id)
     {
         $purchase = $this->purchasesRepository->getById($id);
+        // dd($purchase->purchasesItems);
         if (!$purchase) {
             return redirect()->route('purchases.index')->with('error', 'Data pembelian tidak ditemukan.');
         }
@@ -132,15 +133,38 @@ class PurchasesController extends Controller
             return redirect()->route('purchases.index')->with('error', 'Data pembelian tidak ditemukan.');
         }
 
-
         if ($purchase->status !== 'draft') {
             return redirect()->route('purchases.index')->with('error', 'Hanya PO status "Draft" yang bisa diedit.');
         }
 
         $branches = DB::table('branches')->where('status', 'active')->get();
-        $locations = DB::table('locations')->get();
         $suppliers = DB::table('suppliers')->get();
-        $products = DB::table('products')->where('status', 'active')->get();
+
+
+        $locations = DB::table('locations')->get()->groupBy('branch_id');
+
+        $latestBatchIds = DB::table('batches')
+            ->select('product_id', DB::raw('MAX(id) as max_id'))
+            ->groupBy('product_id');
+
+        $products = DB::table('products as p')
+            ->where('p.status', 'active')
+            ->leftJoinSub($latestBatchIds, 'latest_batches', function ($join) {
+                $join->on('p.id', '=', 'latest_batches.product_id');
+            })
+            ->leftJoin('batches as b', 'b.id', '=', 'latest_batches.max_id')
+            ->select(
+                'p.id',
+                'p.code',
+                'p.name',
+                DB::raw('COALESCE(b.purchase_price_large, 0) as purchase_price_large'),
+                DB::raw('COALESCE(b.purchase_price_small, 0) as purchase_price_small'),
+                DB::raw('COALESCE(b.selling_price_large, 0) as selling_price_large'),
+                DB::raw('COALESCE(b.selling_price_small, 0) as selling_price_small')
+            )
+            ->orderBy('p.name')
+            ->get();
+
         return view('admin.purchases.edit', compact(
             'purchase',
             'branches',
