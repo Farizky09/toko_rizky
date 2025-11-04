@@ -281,31 +281,7 @@
                     {
                         data: 'status',
                         name: 'status',
-                        render: function(data) {
-                            const statusConfig = {
-                                'completed': {
-                                    class: 'bg-green-100 text-green-800',
-                                    icon: 'mdi-check-circle',
-                                    label: 'Completed'
-                                },
-                                'draft': {
-                                    class: 'bg-amber-100 text-amber-800',
-                                    icon: 'mdi-pencil',
-                                    label: 'Draft'
-                                },
-                                'cancelled': {
-                                    class: 'bg-red-100 text-red-800',
-                                    icon: 'mdi-close-circle',
-                                    label: 'Cancelled'
-                                }
-                            };
-
-                            const config = statusConfig[data] || statusConfig.draft;
-                            return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${config.class}">
-                                <span class="mdi ${config.icon}"></span>
-                                ${config.label}
-                            </span>`;
-                        }
+                       
                     },
                     {
                         data: 'action',
@@ -319,6 +295,49 @@
                 }
             });
         });
+
+        function confirmCancel(id, purchaseNumber) {
+            if (typeof Swal === 'undefined') {
+                return alert('SweetAlert not loaded');
+            }
+            Swal.fire({
+                title: `Batalkan Pembelian "${purchaseNumber}"?`,
+                text: "PO akan diubah statusnya menjadi 'Cancelled'. Anda tidak bisa mengeditnya lagi.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33', // Merah
+                cancelButtonColor: '#3085d6', // Biru
+                confirmButtonText: 'Ya, Batalkan!',
+                cancelButtonText: 'Tutup'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('cancel-form-' + id).submit();
+                }
+            });
+        }
+
+        /**
+         * Konfirmasi untuk menghapus permanen (hard delete)
+         */
+        function confirmDestroy(id, purchaseNumber) {
+            if (typeof Swal === 'undefined') {
+                return alert('SweetAlert not loaded');
+            }
+            Swal.fire({
+                title: `HAPUS PERMANEN "${purchaseNumber}"?`,
+                text: "Data pembelian yang 'Cancelled' ini akan dihapus permanen. Tindakan ini tidak dapat dibatalkan!",
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus Permanen!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('destroy-form-' + id).submit();
+                }
+            });
+        }
 
         function updateStats() {
             const table = $('#adminTable').DataTable();

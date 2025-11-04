@@ -14,10 +14,15 @@
                 <a href="{{ route('purchases.index') }}" class="btn btn-outline-secondary">
                     <i class="mdi mdi-arrow-left me-2"></i>Kembali ke Daftar
                 </a>
-                <a href="{{ route('purchases.edit', $purchase->id) }}" class="btn btn-warning">
-                    <i class="mdi mdi-pencil-outline me-2"></i>Edit
-                </a>
-                <button type="button" class="btn btn-outline-danger" onclick="printPurchase()">
+
+                <!-- PERBAIKAN: Tombol Edit hanya muncul jika status 'draft' -->
+                @if ($purchase->status == 'draft')
+                    <a href="{{ route('purchases.edit', $purchase->id) }}" class="btn btn-warning">
+                        <i class="mdi mdi-pencil-outline me-2"></i>Edit
+                    </a>
+                @endif
+
+                <button type="button" class="btn btn-outline-primary" onclick="printPurchase()">
                     <i class="mdi mdi-printer-outline me-2"></i>Print
                 </button>
             </div>
@@ -68,26 +73,22 @@
                                     <tr>
                                         <td class="text-muted">Status</td>
                                         <td>
+
                                             @php
                                                 $statusConfig = [
                                                     'draft' => [
-                                                        'class' => 'bg-gray-100 text-gray-800',
+                                                        'class' => 'bg-amber-100 text-amber-800',
                                                         'icon' => 'mdi-pencil',
                                                         'label' => 'Draft',
                                                     ],
-                                                    'pending' => [
-                                                        'class' => 'bg-amber-100 text-amber-800',
-                                                        'icon' => 'mdi-clock',
-                                                        'label' => 'Pending',
-                                                    ],
                                                     'completed' => [
                                                         'class' => 'bg-green-100 text-green-800',
-                                                        'icon' => 'mdi-check',
+                                                        'icon' => 'mdi-check-circle',
                                                         'label' => 'Completed',
                                                     ],
                                                     'cancelled' => [
                                                         'class' => 'bg-red-100 text-red-800',
-                                                        'icon' => 'mdi-close',
+                                                        'icon' => 'mdi-close-circle',
                                                         'label' => 'Cancelled',
                                                     ],
                                                 ];
@@ -129,59 +130,97 @@
                 <div class="card shadow-sm border-0">
                     <div class="card-header bg-transparent py-3">
                         <h5 class="card-title mb-0 text-gray-900 font-weight-bold">
-                            <i class="mdi mdi-format-list-bulleted me-2"></i>Daftar Item Pembelian
+                            <i class="mdi mdi-format-list-bulleted me-2"></i>Daftar Item
                         </h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th width="5%">#</th>
-                                        <th width="25%">Produk</th>
-                                        <th width="10%" class="text-center">Qty Besar</th>
-                                        <th width="10%" class="text-center">Qty Kecil</th>
-                                        <th width="15%" class="text-end">Harga Beli Besar</th>
-                                        <th width="15%" class="text-end">Harga Beli Kecil</th>
-                                        <th width="15%" class="text-end">Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse(($purchase->purchasesItems ?? []) as $index => $item)
+
+                                @if ($purchase->status == 'completed')
+                                    <!-- Tampilan untuk PO 'Completed' (Menampilkan Qty Terima) -->
+                                    <thead class="bg-light">
                                         <tr>
-                                            <td class="text-center">{{ $index + 1 }}</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-shrink-0">
-                                                        <i class="mdi mdi-package-variant text-primary me-2"></i>
-                                                    </div>
-                                                    <div class="flex-grow-1 ms-2">
-                                                        <div class="fw-semibold">
-                                                            {{ $item->product_name ?? 'Produk Tidak Ditemukan' }}</div>
-                                                        <small class="text-muted">Kode:
-                                                            {{ $item->product_code ?? '-' }}</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="text-center">{{ $item->qty_large }}</td>
-                                            <td class="text-center">{{ $item->qty_small }}</td>
-                                            <td class="text-end">@currency($item->purchase_price_large ?? 0)</td>
-                                            <td class="text-end">@currency($item->purchase_price_small ?? 0)</td>
-                                            <td class="text-end fw-bold text-success">@currency($item->subtotal ?? 0)</td>
+                                            <th width="5%">#</th>
+                                            <th width="25%">Produk</th>
+                                            <th width="10%" class="text-center">Qty Dipesan<br>(Besar/Kecil)</th>
+                                            <th width="10%" class="text-center text-success">Qty
+                                                Diterima<br>(Besar/Kecil)</th>
+                                            <th width="15%" class="text-end">Harga Beli<br>(Besar/Kecil)</th>
+                                            <th width="15%" class="text-end">Subtotal Dipesan</th>
+                                            <th width="20%">Catatan Item</th>
                                         </tr>
-                                    @empty
+                                    </thead>
+                                    <tbody>
+                                        @forelse(($purchase->purchasesItems ?? []) as $index => $item)
+                                            <tr>
+                                                <td class="text-center">{{ $index + 1 }}</td>
+                                                <td>
+                                                    <!-- PERBAIKAN: Menggunakan $item->product->name -->
+                                                    <div class="fw-semibold">{{ $item->product->name ?? 'Produk Dihapus' }}
+                                                    </div>
+                                                    <small class="text-muted">Kode:
+                                                        {{ $item->product->code ?? '-' }}</small>
+                                                </td>
+                                                <td class="text-center">{{ (float) $item->qty_large }} /
+                                                    {{ (float) $item->qty_small }}</td>
+                                                <td class="text-center text-success fw-bold">
+                                                    {{ (float) $item->qty_received_large }} /
+                                                    {{ (float) $item->qty_received_small }}</td>
+                                                <td class="text-end">@currency($item->purchase_price_large) / @currency($item->purchase_price_small)</td>
+                                                <td class="text-end fw-bold">@currency($item->subtotal ?? 0)</td>
+                                                <td class="text-muted"><small>{{ $item->item_notes ?? '-' }}</small></td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted">Tidak ada item.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                @else
+                                    <!-- Tampilan untuk PO 'Draft' / 'Cancelled' (Qty Dipesan Saja) -->
+                                    <thead class="bg-light">
                                         <tr>
-                                            <td colspan="7" class="text-center py-4 text-muted">
-                                                <i class="mdi mdi-cart-off-outline me-2"></i>Tidak ada item pembelian
-                                            </td>
+                                            <th width="5%">#</th>
+                                            <th width="25%">Produk</th>
+                                            <th width="10%" class="text-center">Qty Besar</th>
+                                            <th width="10%" class="text-center">Qty Kecil</th>
+                                            <th width="15%" class="text-end">Harga Beli Besar</th>
+                                            <th width="15%" class="text-end">Harga Beli Kecil</th>
+                                            <th width="15%" class="text-end">Subtotal</th>
                                         </tr>
-                                    @endforelse
-                                </tbody>
+                                    </thead>
+                                    <tbody>
+                                        @forelse(($purchase->purchasesItems ?? []) as $index => $item)
+                                            <tr>
+                                                <td class="text-center">{{ $index + 1 }}</td>
+                                                <td>
+                                                    <!-- PERBAIKAN: Menggunakan $item->product->name -->
+                                                    <div class="fw-semibold">{{ $item->product->name ?? 'Produk Dihapus' }}
+                                                    </div>
+                                                    <small class="text-muted">Kode:
+                                                        {{ $item->product->code ?? '-' }}</small>
+                                                </td>
+                                                <td class="text-center">{{ (float) $item->qty_large }}</td>
+                                                <td class="text-center">{{ (float) $item->qty_small }}</td>
+                                                <td class="text-end">@currency($item->purchase_price_large ?? 0)</td>
+                                                <td class="text-end">@currency($item->purchase_price_small ?? 0)</td>
+                                                <td class="text-end fw-bold text-success">@currency($item->subtotal ?? 0)</td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted">Tidak ada item.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                @endif
+                                <!-- Akhir dari tabel dinamis -->
+
                                 <tfoot class="bg-light">
                                     <tr>
-                                        <td colspan="2" class="text-end fw-bold">Total:</td>
-                                        <td class="text-center fw-bold">{{ $purchase->total_quantity_large }}</td>
-                                        <td class="text-center fw-bold">{{ $purchase->total_quantity_small }}</td>
+                                        <td colspan="2" class="text-end fw-bold">Total Dipesan:</td>
+                                        <td class="text-center fw-bold">{{ (float) $purchase->total_quantity_large }}</td>
+                                        <td class="text-center fw-bold">{{ (float) $purchase->total_quantity_small }}</td>
                                         <td colspan="2" class="text-end fw-bold">Subtotal:</td>
                                         <td class="text-end fw-bold text-success">@currency($purchase->subtotal)</td>
                                     </tr>
@@ -210,19 +249,14 @@
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-transparent py-3">
                         <h5 class="card-title mb-0 text-gray-900 font-weight-bold">
-                            <i class="mdi mdi-chart-bar me-2"></i>Ringkasan Pembelian
+                            <i class="mdi mdi-chart-bar me-2"></i>Ringkasan PO (Dipesan)
                         </h5>
                     </div>
                     <div class="card-body">
                         <div class="text-center mb-4">
-                            <div class="bg-light-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                                style="width: 80px; height: 80px;">
-                                <i class="mdi mdi-cash fs-2 text-primary"></i>
-                            </div>
                             <h3 class="text-success fw-bold">@currency($purchase->total_amount)</h3>
-                            <p class="text-muted">Total Nilai Pembelian</p>
+                            <p class="text-muted">Total Nilai PO</p>
                         </div>
-
                         <div class="space-y-3">
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="text-muted">Total Items</span>
@@ -231,20 +265,18 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="text-muted">Total Quantity</span>
                                 <span
-                                    class="badge bg-green-100 text-green-800">{{ $purchase->total_quantity_large + $purchase->total_quantity_small }}</span>
+                                    class="badge bg-green-100 text-green-800">{{ (float) $purchase->total_quantity_large + (float) $purchase->total_quantity_small }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="text-muted">Quantity Besar</span>
-                                <span class="fw-semibold">{{ $purchase->total_quantity_large }}</span>
+                                <span class="fw-semibold">{{ (float) $purchase->total_quantity_large }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="text-muted">Quantity Kecil</span>
-                                <span class="fw-semibold">{{ $purchase->total_quantity_small }}</span>
+                                <span class="fw-semibold">{{ (float) $purchase->total_quantity_small }}</span>
                             </div>
                         </div>
-
                         <hr>
-
                         <div class="space-y-2">
                             <div class="d-flex justify-content-between">
                                 <span class="text-muted">Subtotal</span>
@@ -274,28 +306,46 @@
                             <div class="timeline-item">
                                 <div class="timeline-marker bg-success"></div>
                                 <div class="timeline-content">
-                                    <h6 class="mb-1">Pembelian Dibuat</h6>
+                                    <h6 class="mb-1">Pembelian Dibuat (PO)</h6>
                                     <p class="text-muted small mb-0">
                                         {{ \Carbon\Carbon::parse($purchase->created_at)->translatedFormat('d F Y H:i') }}
                                     </p>
-                                    <p class="small mb-0">Oleh: {{ $purchase->user_name ?? 'System' }}</p>
+                                    <p class="small mb-0">Oleh: {{ $purchase->user->name ?? 'System' }}</p>
                                 </div>
                             </div>
-                            <div class="timeline-item">
-                                <div class="timeline-marker bg-info"></div>
-                                <div class="timeline-content">
-                                    <h6 class="mb-1">Terakhir Diupdate</h6>
-                                    <p class="text-muted small mb-0">
-                                        {{ \Carbon\Carbon::parse($purchase->updated_at)->translatedFormat('d F Y H:i') }}
-                                    </p>
+
+                            @if ($purchase->created_at != $purchase->updated_at && $purchase->status == 'draft')
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-info"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">PO Terakhir Diupdate</h6>
+                                        <p class="text-muted small mb-0">
+                                            {{ \Carbon\Carbon::parse($purchase->updated_at)->translatedFormat('d F Y H:i') }}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
+
                             @if ($purchase->status == 'completed')
                                 <div class="timeline-item">
                                     <div class="timeline-marker bg-success"></div>
                                     <div class="timeline-content">
-                                        <h6 class="mb-1">Pembelian Selesai</h6>
-                                        <p class="text-muted small mb-0">Status: Completed</p>
+                                        <h6 class="mb-1">Barang Diterima (GR)</h6>
+                                        <p class="text-muted small mb-0">
+                                            {{ \Carbon\Carbon::parse($purchase->updated_at)->translatedFormat('d F Y H:i') }}
+                                        </p>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($purchase->status == 'cancelled')
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-danger"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Pembelian Dibatalkan</h6>
+                                        <p class="text-muted small mb-0">
+                                            {{ \Carbon\Carbon::parse($purchase->updated_at)->translatedFormat('d F Y H:i') }}
+                                        </p>
                                     </div>
                                 </div>
                             @endif
@@ -311,13 +361,37 @@
                         </h5>
                     </div>
                     <div class="card-body">
+                        <!-- PERBAIKAN: Tombol aksi dinamis berdasarkan status -->
                         <div class="d-grid gap-2">
-                            <a href="{{ route('purchases.edit', $purchase->id) }}" class="btn btn-warning">
-                                <i class="mdi mdi-pencil-outline me-2"></i>Edit Pembelian
-                            </a>
-                            <button type="button" class="btn btn-outline-danger" onclick="confirmDelete()">
-                                <i class="mdi mdi-delete-outline me-2"></i>Hapus Pembelian
-                            </button>
+
+                            @if ($purchase->status == 'draft')
+                                <!-- Aksi untuk 'Draft' -->
+                                <a href="{{ route('purchases.receive-form', $purchase->id) }}" class="btn btn-success">
+                                    <i class="mdi mdi-truck-check-outline me-2"></i>Terima Barang
+                                </a>
+                                <a href="{{ route('purchases.edit', $purchase->id) }}" class="btn btn-warning">
+                                    <i class="mdi mdi-pencil-outline me-2"></i>Edit Pembelian
+                                </a>
+                                <button type="button" class="btn btn-outline-danger"
+                                    onclick="confirmCancel({{ $purchase->id }}, '{{ $purchase->purchase_number }}')">
+                                    <i class="mdi mdi-close-circle-outline me-2"></i>Batalkan Pembelian
+                                </button>
+                            @endif
+
+                            @if ($purchase->status == 'cancelled')
+                                <!-- Aksi untuk 'Cancelled' -->
+                                <button type="button" class="btn btn-danger"
+                                    onclick="confirmDestroy({{ $purchase->id }}, '{{ $purchase->purchase_number }}')">
+                                    <i class="mdi mdi-trash-can-outline me-2"></i>Hapus Permanen
+                                </button>
+                            @endif
+
+                            @if ($purchase->status == 'completed')
+                                <p class="text-muted text-center"><i class="mdi mdi-check-circle me-1"></i>Pembelian sudah
+                                    selesai diproses.</p>
+                            @endif
+
+                            <!-- Aksi yang selalu ada -->
                             <button type="button" class="btn btn-outline-primary" onclick="printPurchase()">
                                 <i class="mdi mdi-printer-outline me-2"></i>Print Pembelian
                             </button>
@@ -328,11 +402,23 @@
         </div>
     </div>
 
-    <!-- Delete Form (Hidden) -->
-    <form action="{{ route('purchases.delete', $purchase->id) }}" method="POST" id="deleteForm" class="d-none">
-        @csrf
-        @method('DELETE')
-    </form>
+    <!-- PERBAIKAN: Form tersembunyi untuk Aksi dinamis -->
+    @if ($purchase->status == 'draft')
+        <form action="{{ route('purchases.cancel', $purchase->id) }}" method="POST"
+            id="cancel-form-{{ $purchase->id }}" class="d-none">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endif
+    @if ($purchase->status == 'cancelled')
+        <form action="{{ route('purchases.delete', $purchase->id) }}" method="POST"
+            id="destroy-form-{{ $purchase->id }}" class="d-none">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endif
+
+    <!-- HAPUS Form 'deleteForm' yang lama -->
 @endsection
 
 @push('styles')
@@ -354,36 +440,83 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: #6c757d;
+            /* background: #6c757d; */
+            /* Dihapus agar warna dinamis */
         }
 
         .timeline-content {
             padding-left: 10px;
+        }
+
+        /* Warna marker dinamis */
+        .timeline-marker.bg-success {
+            background-color: #198754;
+        }
+
+        .timeline-marker.bg-info {
+            background-color: #0dcaf0;
+        }
+
+        .timeline-marker.bg-danger {
+            background-color: #dc3545;
         }
     </style>
 @endpush
 
 @push('scripts')
     <script>
-        
+        /**
+         * PERBAIKAN: Script SweetAlert disesuaikan dengan aksi baru
+         */
 
-        function confirmDelete() {
+        // (Fungsi printPurchase() Anda bisa ditambahkan di sini jika ada)
+        function printPurchase() {
+            alert('Fungsi print belum dibuat.');
+            // window.print(); // atau logika print custom
+        }
+
+        /**
+         * Konfirmasi untuk membatalkan (mengubah status ke 'cancelled')
+         */
+        function confirmCancel(id, purchaseNumber) {
             Swal.fire({
-                title: `Hapus Pembelian "{{ $purchase->purchase_number }}"?`,
-                text: 'Pembelian akan dihapus permanen beserta semua itemnya. Tindakan ini tidak dapat dibatalkan!',
+                title: `Batalkan Pembelian "${purchaseNumber}"?`,
+                text: "PO akan diubah statusnya menjadi 'Cancelled'.",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
+                confirmButtonText: 'Ya, Batalkan!',
+                cancelButtonText: 'Tutup'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('deleteForm').submit();
+                    document.getElementById('cancel-form-' + id).submit();
                 }
             });
         }
 
+        /**
+         * Konfirmasi untuk menghapus permanen (hard delete)
+         */
+        function confirmDestroy(id, purchaseNumber) {
+            Swal.fire({
+                title: `HAPUS PERMANEN "${purchaseNumber}"?`,
+                text: "Data pembelian yang 'Cancelled' ini akan dihapus permanen. Tindakan ini tidak dapat dibatalkan!",
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus Permanen!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('destroy-form-'
+                        t + id).submit();
+                }
+            });
+        }
+
+        // Script notifikasi 'success' Anda
         @if (session('success'))
             Swal.fire({
                 icon: 'success',

@@ -126,6 +126,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/edit/{id}', [PurchasesController::class, 'edit'])->middleware('permission:update_purchases')->name('edit');
             Route::put('/update/{id}', [PurchasesController::class, 'update'])->middleware('permission:update_purchases')->name('update');
             Route::delete('/delete/{id}', [PurchasesController::class, 'delete'])->middleware('permission:delete_purchases')->name('delete');
+            Route::get('/show-receive-form/{id}', [PurchasesController::class, 'showReceiveForm'])->name('receive-form');
+            Route::put('/process-receive/{id}', [PurchasesController::class, 'processReceive'])->middleware('permission:update_purchases')->name('receive-process');
+            Route::put('/cancel/{id}', [PurchasesController::class, 'cancel'])->middleware('permission:update_purchases')->name('cancel');
         });
     });
     Route::prefix('owner')->name('owner.')->middleware(['role:owner|admin'])->group(function () {});

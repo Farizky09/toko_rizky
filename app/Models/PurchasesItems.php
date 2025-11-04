@@ -21,6 +21,10 @@ class PurchasesItems extends Model
         'qty_large',
         'qty_small',
         'subtotal',
+        'qty_received_large',
+        'qty_received_small',
+        'expiry_date',
+        'item_notes',
     ];
 
     /**

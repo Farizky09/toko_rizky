@@ -14,30 +14,29 @@ class PurchasesRequest extends FormRequest
     public function rules(): array
     {
 
-        return [
+      
+           return [
             'branch_id' => 'required|exists:branches,id',
             'location_id' => 'required|exists:locations,id',
             'supplier_id' => 'required|exists:suppliers,id',
             'purchase_date' => 'required|date',
             'tax' => 'nullable|numeric|min:0',
             'discount' => 'nullable|numeric|min:0',
-            'status' => 'required|in:draft,completed,cancelled',
             'notes' => 'nullable|string|max:1000',
 
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
 
-            // minimal salah satu qty harus diisi
-            'items.*.qty_large' => 'nullable|integer|min:0|required_without:items.*.qty_small',
-            'items.*.qty_small' => 'nullable|integer|min:0|required_without:items.*.qty_large',
+            'items.*.qty_large' => 'nullable|numeric|min:0|required_without_all:items.*.qty_small',
+            'items.*.qty_small' => 'nullable|numeric|min:0|required_without_all:items.*.qty_large',
 
-            // minimal salah satu harga beli harus diisi
-            'items.*.purchase_price_large' => 'nullable|numeric|min:0|required_without:items.*.purchase_price_small',
-            'items.*.purchase_price_small' => 'nullable|numeric|min:0|required_without:items.*.purchase_price_large',
+            'items.*.purchase_price_large' => 'nullable|numeric|min:0|required_without_all:items.*.purchase_price_small',
+            'items.*.purchase_price_small' => 'nullable|numeric|min:0|required_without_all:items.*.purchase_price_large',
 
-            // minimal salah satu harga jual harus diisi
-            'items.*.selling_price_large' => 'nullable|numeric|min:0|required_without:items.*.selling_price_small',
-            'items.*.selling_price_small' => 'nullable|numeric|min:0|required_without:items.*.selling_price_large',
+            'items.*.selling_price_large' => 'nullable|numeric|min:0|required_without_all:items.*.selling_price_small',
+            'items.*.selling_price_small' => 'nullable|numeric|min:0|required_without_all:items.*.selling_price_large',
+
+            'items.*.expiry_date' => 'nullable|date',
         ];
     }
 

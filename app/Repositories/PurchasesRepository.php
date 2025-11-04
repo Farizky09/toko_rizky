@@ -72,101 +72,6 @@ class PurchasesRepository implements PurchasesInterfaces
     }
 
 
-    public function store($data)
-    {
-        return DB::transaction(function () use ($data) {
-            try {
-
-
-                $purchaseNumber = $this->generatePurchaseNumber();
-
-                if (!isset($data['branch_id']) || !isset($data['location_id']) || !isset($data['supplier_id'])) {
-                    throw new \Exception('Required fields are missing');
-                }
-
-                $totalItems = count($data['items']);
-                $totalQtyLarge = collect($data['items'])->sum(function ($item) {
-                    return (int) ($item['qty_large'] ?? 0);
-                });
-                $totalQtySmall = collect($data['items'])->sum(function ($item) {
-                    return (int) ($item['qty_small'] ?? 0);
-                });
-
-                $subtotal = $this->calculateSubtotal($data['items']);
-                $tax = (float) ($data['tax'] ?? 0);
-                $discount = (float) ($data['discount'] ?? 0);
-                $totalAmount = $this->calculateTotalAmount($data['items'], $tax, $discount);
-
-                // Create purchase
-                $purchase = Purchases::create([
-                    'purchase_number' => $purchaseNumber,
-                    'branch_id' => $data['branch_id'],
-                    'location_id' => $data['location_id'],
-                    'supplier_id' => $data['supplier_id'],
-                    'user_id' => auth()->user()->id ?? null,
-                    'purchase_date' => $data['purchase_date'],
-                    'total_items' => $totalItems,
-                    'total_quantity_large' => $totalQtyLarge,
-                    'total_quantity_small' => $totalQtySmall,
-                    'subtotal' => $subtotal,
-                    'tax' => $tax,
-                    'discount' => $discount,
-                    'total_amount' => $totalAmount,
-                    'status' => $data['status'],
-                    'notes' => $data['notes'] ?? null,
-                ]);
-
-                $this->savePurchaseItems($purchase, $data['items']);
-
-                return $purchase;
-            } catch (\Exception $e) {
-                throw $e;
-            }
-        });
-    }
-
-    public function update($data, $id)
-    {
-        return DB::transaction(function () use ($data, $id) {
-            $purchase = Purchases::findOrFail($id);
-
-            $purchase->update([
-                'branch_id' => $data['branch_id'],
-                'location_id' => $data['location_id'],
-                'supplier_id' => $data['supplier_id'],
-                'purchase_date' => $data['purchase_date'],
-                'total_items' => count($data['items']),
-                'total_quantity_large' => collect($data['items'])->sum('qty_large'),
-                'total_quantity_small' => collect($data['items'])->sum('qty_small'),
-                'subtotal' => $this->calculateSubtotal($data['items']),
-                'tax' => $data['tax'] ?? 0,
-                'discount' => $data['discount'] ?? 0,
-                'total_amount' => $this->calculateTotalAmount($data['items'], $data['tax'], $data['discount']),
-                'status' => $data['status'],
-                'notes' => $data['notes'],
-            ]);
-
-            $purchase->purchasesItems()->delete();
-            $this->savePurchaseItems($purchase->id, $data['items']);
-
-            return $purchase;
-        });
-    }
-
-    public function delete($id)
-    {
-        return DB::transaction(function () use ($id) {
-            $purchases = $this->purchases->findOrFail($id);
-            if ($purchases) {
-
-                $purchases->purchasessItems()->delete();
-                $purchases->delete();
-                return $purchases;
-            }
-            throw new Exception('Purchases not found');
-        });
-    }
-
     public function datatable()
     {
         return DB::table('purchases')
@@ -183,53 +88,158 @@ class PurchasesRepository implements PurchasesInterfaces
             ->leftJoin('users', 'purchases.user_id', '=', 'users.id')
             ->orderBy('purchases.created_at', 'desc');
     }
-    public function generatePurchaseNumber()
+    public function store($data)
     {
-        try {
-            $date = now()->format('Ymd');
-            $lastPurchase = Purchases::whereDate('created_at', today())->latest()->first();
+        return DB::transaction(function () use ($data) {
+            try {
+                if (!isset($data['branch_id']) || !isset($data['location_id']) || !isset($data['supplier_id'])) {
+                    throw new \Exception('Field Cabang, Lokasi, dan Supplier wajib diisi.');
+                }
 
-            if ($lastPurchase) {
+                $totalItems = count($data['items']);
+                $totalQtyLarge = collect($data['items'])->sum(fn($item) => (int) ($item['qty_large'] ?? 0));
+                $totalQtySmall = collect($data['items'])->sum(fn($item) => (int) ($item['qty_small'] ?? 0));
+                $subtotal = $this->calculateSubtotal($data['items']);
+                $tax = (float) ($data['tax'] ?? 0);
+                $discount = (float) ($data['discount'] ?? 0);
+                $totalAmount = $this->calculateTotalAmount($data['items'], $tax, $discount);
+                $purchaseNumber = $this->generatePurchaseNumber();
 
-                $lastNumber = preg_replace('/[^0-9]/', '', $lastPurchase->purchase_number);
-                $lastFourDigits = substr($lastNumber, -4);
-                $newNumber = str_pad((int)$lastFourDigits + 1, 4, '0', STR_PAD_LEFT);
-            } else {
-                $newNumber = '0001';
+                $purchase = Purchases::create([
+                    'purchase_number' => $purchaseNumber,
+                    'branch_id' => $data['branch_id'],
+                    'location_id' => $data['location_id'],
+                    'supplier_id' => $data['supplier_id'],
+                    'user_id' => auth()->user()->id ?? null,
+                    'purchase_date' => $data['purchase_date'],
+                    'total_items' => $totalItems,
+                    'total_quantity_large' => $totalQtyLarge,
+                    'total_quantity_small' => $totalQtySmall,
+                    'subtotal' => $subtotal,
+                    'tax' => $tax,
+                    'discount' => $discount,
+                    'total_amount' => $totalAmount,
+                    'status' => 'draft',
+                    'notes' => $data['notes'] ?? null,
+                ]);
+
+                $this->savePurchaseItemsOnly($purchase, $data['items']);
+
+                return $purchase;
+            } catch (\Exception $e) {
+                throw $e;
             }
-
-            $purchaseNumber = "PUR{$date}{$newNumber}";
-
-
-            return $purchaseNumber;
-        } catch (\Exception $e) {
-            throw new \Exception('Failed to generate purchase number: ' . $e->getMessage());
-        }
-    }
-    private function generateBatchNumber()
-    {
-        try {
-            $date = now()->format('Ymd');
-            $lastBatch = Batches::whereDate('created_at', today())->latest()->first();
-
-            if ($lastBatch) {
-                // Ambil angka dari batch_number terakhir
-                $lastNumber = preg_replace('/[^0-9]/', '', $lastBatch->batch_number);
-                $lastFourDigits = substr($lastNumber, -4);
-                $newNumber = str_pad((int)$lastFourDigits + 1, 4, '0', STR_PAD_LEFT);
-            } else {
-                $newNumber = '0001';
-            }
-
-            $batchNumber = "BAT{$date}{$newNumber}";
-
-            return $batchNumber;
-        } catch (\Exception $e) {
-            throw new \Exception('Failed to generate batch number: ' . $e->getMessage());
-        }
+        });
     }
 
-    private function savePurchaseItems($purchase, $items)
+    public function update($data, $id)
+    {
+        return DB::transaction(function () use ($data, $id) {
+            $purchase = Purchases::findOrFail($id);
+
+            if ($purchase->status !== 'draft') {
+                throw new \Exception('Hanya pembelian dengan status "draft" yang bisa di-update.');
+            }
+
+            $totalItems = count($data['items']);
+            $totalQtyLarge = collect($data['items'])->sum(fn($item) => (int) ($item['qty_large'] ?? 0));
+            $totalQtySmall = collect($data['items'])->sum(fn($item) => (int) ($item['qty_small'] ?? 0));
+            $subtotal = $this->calculateSubtotal($data['items']);
+            $tax = (float) ($data['tax'] ?? 0);
+            $discount = (float) ($data['discount'] ?? 0);
+            $totalAmount = $this->calculateTotalAmount($data['items'], $tax, $discount);
+
+            $purchase->update([
+                'branch_id' => $data['branch_id'],
+                'location_id' => $data['location_id'],
+                'supplier_id' => $data['supplier_id'],
+                'purchase_date' => $data['purchase_date'],
+                'total_items' => $totalItems,
+                'total_quantity_large' => $totalQtyLarge,
+                'total_quantity_small' => $totalQtySmall,
+                'subtotal' => $subtotal,
+                'tax' => $tax,
+                'discount' => $discount,
+                'total_amount' => $totalAmount,
+                'notes' => $data['notes'] ?? null,
+            ]);
+
+            $purchase->purchasesItems()->delete();
+            $this->savePurchaseItemsOnly($purchase, $data['items']);
+
+            return $purchase;
+        });
+    }
+
+    public function receivePurchase($id, $receivedData)
+    {
+        return DB::transaction(function () use ($id, $receivedData) {
+            $purchase = Purchases::with('purchasesItems')->findOrFail($id);
+
+            if ($purchase->status !== 'draft') {
+                throw new \Exception('Pembelian ini sudah diproses atau dibatalkan.');
+            }
+
+            foreach ($receivedData['items'] as $itemId => $itemData) {
+                $itemId = (int) $itemId;
+                $item = $purchase->purchasesItems->firstWhere('id', $itemId);
+
+                if ($item) {
+                    $item->update([
+                        'qty_received_large' => (float)($itemData['qty_received_large'] ?? 0),
+                        'qty_received_small' => (float)($itemData['qty_received_small'] ?? 0),
+                        'item_notes' => $itemData['item_notes'] ?? null,
+                    ]);
+                }
+            }
+
+            $this->processStockIn($purchase);
+
+
+            $purchase->status = 'completed';
+            $purchase->save();
+
+            return $purchase;
+        });
+    }
+
+
+    public function cancel($id)
+    {
+        return DB::transaction(function () use ($id) {
+            $purchase = $this->purchases->findOrFail($id);
+
+            if ($purchase->status !== 'draft') {
+                throw new Exception('Hanya pembelian "draft" yang bisa dibatalkan.');
+            }
+
+            $purchase->status = 'cancelled';
+            $purchase->save();
+
+
+            return $purchase;
+        });
+    }
+
+
+    public function delete($id)
+    {
+        return DB::transaction(function () use ($id) {
+            $purchase = $this->purchases->findOrFail($id);
+
+            if ($purchase->status !== 'cancelled') {
+                throw new Exception('Hanya pembelian "Cancelled" yang boleh dihapus permanen.');
+            }
+
+            $purchase->purchasesItems()->delete();
+            $purchase->delete();
+
+            return $purchase;
+        });
+    }
+
+
+    private function savePurchaseItemsOnly(Purchases $purchase, array $items)
     {
         foreach ($items as $index => $item) {
             try {
@@ -247,7 +257,7 @@ class PurchasesRepository implements PurchasesInterfaces
 
                 $subtotal = ($qtyLarge * $purchasePriceLarge) + ($qtySmall * $purchasePriceSmall);
 
-                $purchaseItem = PurchasesItems::create([
+                PurchasesItems::create([
                     'purchase_id' => $purchase->id,
                     'product_id' => $item['product_id'],
                     'selling_price_small' => $sellingPriceSmall,
@@ -256,36 +266,91 @@ class PurchasesRepository implements PurchasesInterfaces
                     'qty_small' => $qtySmall,
                     'purchase_price_small' => $purchasePriceSmall,
                     'purchase_price_large' => $purchasePriceLarge,
+                    'expiry_date' => $expiryDate,
                     'subtotal' => $subtotal,
                 ]);
-
-                $batchNumber = $this->generateBatchNumber();
-
-                $batch = Batches::create([
-                    'product_id' => $purchaseItem->product_id,
-                    'batch_number' => $batchNumber,
-                    'purchase_price_large' => $purchaseItem->purchase_price_large,
-                    'purchase_price_small' => $purchaseItem->purchase_price_small,
-                    'quantity_large' => $purchaseItem->qty_large,
-                    'quantity_small' => $purchaseItem->qty_small,
-                    'selling_price_large' => $purchaseItem->selling_price_large,
-                    'selling_price_small' => $purchaseItem->selling_price_small,
-                    'expiry_date' => $expiryDate,
-                    'status' => 'active',
-                ]);
-                // $lcoations = $purchaseItem->purchases->location_id;
-                BatchLocations::create([
-                    'batch_id' => $batch->id,
-                    'location_id' => $purchase->location_id,
-                    'quantity_large' => $batch->quantity_large,
-                    'quantity_small' => $batch->quantity_small,
-                ]);
             } catch (\Exception $e) {
-                throw new \Exception("Failed to save item {$index}: " . $e->getMessage());
+                throw new \Exception("Gagal menyimpan item {$index}: " . $e->getMessage());
             }
         }
     }
 
+    private function processStockIn(Purchases $purchase)
+    {
+        $purchase->load('purchasesItems');
+
+        foreach ($purchase->purchasesItems as $item) {
+
+            if ($item->qty_received_large > 0 || $item->qty_received_small > 0) {
+                $batchNumber = $this->generateBatchNumber();
+
+                $batch = Batches::create([
+                    'product_id' => $item->product_id,
+                    'batch_number' => $batchNumber,
+                    'purchase_price_large' => $item->purchase_price_large,
+                    'purchase_price_small' => $item->purchase_price_small,
+                    'quantity_large' => $item->qty_received_large,
+                    'quantity_small' => $item->qty_received_small,
+                    'selling_price_large' => $item->selling_price_large,
+                    'selling_price_small' => $item->selling_price_small,
+                    'expiry_date' => $item->expiry_date,
+                    'status' => 'active',
+                ]);
+
+                BatchLocations::create([
+                    'batch_id' => $batch->id,
+                    'location_id' => $purchase->location_id,
+                    'quantity_large' => $item->qty_received_large,
+                    'quantity_small' => $item->qty_received_small,
+                ]);
+            }
+        }
+    }
+
+
+    public function generatePurchaseNumber()
+    {
+        try {
+            $date = now()->format('Ymd');
+            $lastPurchase = Purchases::whereDate('created_at', today())->latest()->first();
+
+            if ($lastPurchase) {
+                $lastNumber = preg_replace('/[^0-9]/', '', $lastPurchase->purchase_number);
+                $lastFourDigits = substr($lastNumber, -4);
+                $newNumber = str_pad((int)$lastFourDigits + 1, 4, '0', STR_PAD_LEFT);
+            } else {
+                $newNumber = '0001';
+            }
+
+            $purchaseNumber = "PUR{$date}{$newNumber}";
+
+            return $purchaseNumber;
+        } catch (\Exception $e) {
+            throw new \Exception('Gagal generate nomor purchase: ' . $e->getMessage());
+        }
+    }
+
+    private function generateBatchNumber()
+    {
+        try {
+            $date = now()->format('Ymd');
+            $lastBatch = Batches::whereDate('created_at', today())->latest()->first();
+
+            if ($lastBatch) {
+                $lastNumber = preg_replace('/[^0-9]/', '', $lastBatch->batch_number);
+                $lastFourDigits = substr($lastNumber, -4);
+                $newNumber = str_pad((int)$lastFourDigits + 1, 4, '0', STR_PAD_LEFT);
+            } else {
+                $newNumber = '0001';
+            }
+
+            $batchNumber = "BAT{$date}{$newNumber}";
+
+            return $batchNumber;
+        } catch (\Exception $e) {
+            throw new \Exception('Gagal generate nomor batch: ' . $e->getMessage());
+        }
+    }
 
     private function calculateSubtotal($items)
     {
@@ -294,11 +359,7 @@ class PurchasesRepository implements PurchasesInterfaces
             $qtySmall = (int) ($item['qty_small'] ?? 0);
             $priceLarge = (float) ($item['purchase_price_large'] ?? 0);
             $priceSmall = (float) ($item['purchase_price_small'] ?? 0);
-
             $itemSubtotal = ($qtyLarge * $priceLarge) + ($qtySmall * $priceSmall);
-
-
-
             return $carry + $itemSubtotal;
         }, 0);
     }
@@ -308,10 +369,7 @@ class PurchasesRepository implements PurchasesInterfaces
         $subtotal = $this->calculateSubtotal($items);
         $tax = (float) ($tax ?? 0);
         $discount = (float) ($discount ?? 0);
-
         $total = ($subtotal + $tax) - $discount;
-
-
         return $total;
     }
 }
