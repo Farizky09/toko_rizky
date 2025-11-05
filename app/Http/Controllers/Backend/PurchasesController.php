@@ -19,6 +19,8 @@ class PurchasesController extends Controller
 
     public function index(Request $request)
     {
+
+        // dd($this->purchasesRepository->datatable()->get());
         if ($request->ajax()) {
             $data = $this->purchasesRepository->datatable();
 
@@ -208,13 +210,15 @@ class PurchasesController extends Controller
     public function processReceive($id, ReceivePurchaseRequest $request)
     {
         try {
-            $this->purchasesRepository->receivePurchase($id, $request->validated());
+            $receive = $this->purchasesRepository->receivePurchase($id, $request->validated());
+            dd($receive);
             return redirect()
                 ->route('purchases.index')
                 ->with('success', 'Barang berhasil diterima dan stok telah ditambahkan.');
         } catch (\Exception $e) {
+            dd($e);
             return redirect()
-                ->route('purchases.receive.form', $id)
+                ->route('purchases.receive-form', $id)
                 ->with('error', 'Gagal memproses penerimaan: ' . $e->getMessage());
         }
     }

@@ -6,6 +6,7 @@
     <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
         <form action="{{ route('purchases.receive-process', $purchase->id) }}" method="POST">
             @csrf
+            @method('PUT')
             <div class="mb-8">
                 <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                     <div class="space-y-3">
