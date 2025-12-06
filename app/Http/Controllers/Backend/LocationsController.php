@@ -29,7 +29,9 @@ class LocationsController extends Controller
                 ->addColumn('type', function ($data) {
                     return $data->type === 'warehouse' ? 'Gudang' : 'Toko';
                 })
-                
+                ->addColumn('status', function ($data) {
+                    return $data->status; // 'active' atau 'inactive'
+                })
                 ->addColumn('action', function ($data) {
                     return view('admin.locations.column.action', compact('data'));
                 })

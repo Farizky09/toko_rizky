@@ -67,7 +67,7 @@ class PurchasesController extends Controller
 
         $purchaseNumber = $this->purchasesRepository->generatePurchaseNumber();
         $branches = DB::table('branches')->where('status', 'active')->get();
-        $suppliers = DB::table('suppliers')->get();
+        $suppliers = DB::table('suppliers')->where('status', 'active')->get();
 
         $locations = DB::table('locations')->get()->groupBy('branch_id');
 
@@ -140,7 +140,7 @@ class PurchasesController extends Controller
         }
 
         $branches = DB::table('branches')->where('status', 'active')->get();
-        $suppliers = DB::table('suppliers')->get();
+        $suppliers = DB::table('suppliers')->where('status', 'active')->get();
 
 
         $locations = DB::table('locations')->get()->groupBy('branch_id');

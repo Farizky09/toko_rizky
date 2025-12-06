@@ -29,7 +29,7 @@
                 <!-- Action Buttons -->
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                     @canany(['create_unit_larges'])
-                        <a href="{{ route('unit_larges.create') }}"
+                        <a href="{{ route('unit-larges.create') }}"
                             class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             <span class="mdi mdi-plus-circle-outline text-lg"></span>
                             Tambah Satuan Besar
@@ -138,7 +138,7 @@
             $('#adminTable').DataTable({
                 responsive: true,
                 ajax: {
-                    url: '{{ route('unit_larges.index') }}',
+                    url: '{{ route('unit-larges.index') }}',
                     type: 'GET'
                 },
                 columns: [{

@@ -257,12 +257,15 @@
 
         function updateStats() {
             const table = $('#adminTable').DataTable();
-            const totalRecords = table.page.info().recordsTotal;
+            const data = table.rows().data().toArray();
 
-            // In a real application, you would get these counts from the server
+            const totalRecords = data.length;
+            const inactiveCount = data.filter(row => row.status === 'inactive').length;
+            const activeCount = totalRecords - inactiveCount;
+
             $('#totalBranches').text(totalRecords);
-            $('#activeBranches').text(totalRecords); // Assuming all are active for demo
-            $('#inactiveBranches').text('0'); // Assuming none are inactive for demo
+            $('#activeBranches').text(activeCount); // Assuming all are active for demo
+            $('#inactiveBranches').text(inactiveCount); // Assuming none are inactive for demo
 
             const now = new Date();
             $('#lastUpdated').text(now.toLocaleTimeString('id-ID', {

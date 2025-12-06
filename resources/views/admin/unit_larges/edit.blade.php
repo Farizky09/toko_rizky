@@ -11,7 +11,7 @@
                 <p class="text-muted">Perbarui informasi satuan besar yang sudah ada</p>
             </div>
             <div class="d-flex gap-2">
-                <a href="{{ route('unit_larges.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('unit-larges.index') }}" class="btn btn-outline-secondary">
                     <i class="mdi mdi-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="button" class="btn btn-outline-danger" onclick="confirmDelete()">
@@ -30,7 +30,7 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('unit_larges.update', $data->id) }}" method="POST" id="unitLargeForm">
+                        <form action="{{ route('unit-larges.update', $data->id) }}" method="POST" id="unitLargeForm">
                             @csrf
                             @method('PUT')
 
@@ -173,7 +173,7 @@
     </div>
 
     <!-- Delete Form (Hidden) -->
-    <form action="{{ route('unit_larges.delete', $data->id) }}" method="POST" id="deleteForm" class="d-none">
+    <form action="{{ route('unit-larges.delete', $data->id) }}" method="POST" id="deleteForm" class="d-none">
         @csrf
         @method('DELETE')
     </form>

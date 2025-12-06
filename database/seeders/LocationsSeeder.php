@@ -21,12 +21,15 @@ class LocationsSeeder extends Seeder
                 'branch_id' => $branch->id,
                 'name' => 'Gudang ' . $branch->city,
                 'type' => 'warehouse',
+                'status' => 'active',
+
             ];
 
             $locations[] = [
                 'branch_id' => $branch->id,
                 'name' => 'Toko ' . $branch->city,
                 'type' => 'store',
+                'status' => 'active',
             ];
         }
 

@@ -10,7 +10,7 @@
           <div class="mt-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
 
               @canany(['create_user_management'])
-                  <a href="{{ route('user_management.create') }}"
+                  <a href="{{ route('user-management.create') }}"
                       class="flex min-w-fit items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ml-auto">
                       <span class="mdi mdi-plus-circle-outline text-lg"></span>
                       Tambah User
@@ -51,7 +51,7 @@
               $('#adminTable').DataTable({
                   responsive: true,
                   ajax: {
-                      url: '{{ route('user_management.index') }}',
+                      url: '{{ route('user-management.index') }}',
                       type: 'GET'
                   },
                   columns: [{

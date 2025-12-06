@@ -1,6 +1,6 @@
   <div class="flex items-center gap-2">
       @canany(['update_user_management'])
-          <a href="{{ route('user_management.edit', $data->id) }}"
+          <a href="{{ route('user-management.edit', $data->id) }}"
               class="flex col-span-6 items-center gap-3 px-3 py-2 text-sm rounded-lg bg-yellow-200 text-gray-700 hover:bg-gray-100"
               role="menuitem" tabindex="-1">
               <span class="mdi mdi-pencil-outline text-yellow-600 "></span>
@@ -9,7 +9,7 @@
       @endcanany
 
       @canany(['delete_user_management'])
-          <form action="{{ route('user_management.delete', $data->id) }}" method="POST" class="col-span-6 delete-form">
+          <form action="{{ route('user-management.delete', $data->id) }}" method="POST" class="col-span-6 delete-form">
               @csrf
               @method('DELETE')
               <button type="button"

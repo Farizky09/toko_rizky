@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
-    <form class="p-6" action="{{ route('user_management.store') }}" method="POST">
+    <form class="p-6" action="{{ route('user-management.store') }}" method="POST">
         @csrf
         <div class="grid grid-cols-1 gap-x-6 gap-y-6 md:grid-cols-2">
 

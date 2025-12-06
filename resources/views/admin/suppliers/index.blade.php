@@ -70,6 +70,19 @@
                     </div>
                 </div>
             </div>
+            <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-50">
+                            <span class="mdi mdi-account-check text-xl text-green-600"></span>
+                        </div>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <p class="text-sm font-medium text-gray-600">Supplier Tidak Aktif</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="inactiveSuppliers">0</p>
+                    </div>
+                </div>
+            </div>
 
             <!-- Recent Activity Card -->
             <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
@@ -119,6 +132,7 @@
                                 <th>Nama Supplier</th>
                                 <th>Alamat</th>
                                 <th>Telepon</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -194,6 +208,23 @@
                         }
                     },
                     {
+                        data: 'status',
+                        name: 'status',
+                        render: function(data) {
+                            if (data == 'active') {
+                                return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <span class="mdi mdi-check-circle text-green-500"></span>
+                                        Aktif
+                                    </span>`;
+                            } else {
+                                return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        <span class="mdi mdi-close-circle text-red-500"></span>
+                                        Nonaktif
+                                    </span>`;
+                            }
+                        }
+                    },
+                    {
                         data: 'action',
                         name: 'action',
                         orderable: false,
@@ -209,10 +240,15 @@
 
         function updateStats() {
             const table = $('#adminTable').DataTable();
-            const totalRecords = table.page.info().recordsTotal;
+            const data = table.rows().data().toArray();
+
+            const totalRecords = data.length;
+            const inactiveRecords = data.filter(row => row.status === 'inactive').length;
+            const activeRecords = totalRecords - inactiveRecords;
 
             $('#totalSuppliers').text(totalRecords);
-            $('#activeSuppliers').text(totalRecords); // Assuming all are active
+            $('#activeSuppliers').text(activeRecords);
+            $('#inactiveSuppliers').text(inactiveRecords);
 
             const now = new Date();
             $('#lastUpdated').text(now.toLocaleTimeString('id-ID', {

@@ -10,7 +10,7 @@
                 <h1 class="h3 mb-2 text-gray-900 font-weight-bold">Tambah Satuan Kecil Baru</h1>
                 <p class="text-muted">Buat satuan kecil baru untuk sistem pengukuran</p>
             </div>
-            <a href="{{ route('unit_smalls.index') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('unit-smalls.index') }}" class="btn btn-outline-secondary">
                 <i class="mdi mdi-arrow-left me-2"></i>Kembali ke Daftar
             </a>
         </div>
@@ -23,7 +23,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                <form action="{{ route('unit_smalls.store') }}" method="POST" id="unitSmallForm">
+                <form action="{{ route('unit-smalls.store') }}" method="POST" id="unitSmallForm">
                     @csrf
 
                     <!-- Name Field -->

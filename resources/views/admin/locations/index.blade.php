@@ -80,8 +80,21 @@
                         </div>
                     </div>
                     <div class="ml-4 flex-1">
-                        <p class="text-sm font-medium text-gray-600">Cabang Aktif</p>
-                        <p class="text-2xl font-semibold text-gray-900" id="activeBranches">0</p>
+                        <p class="text-sm font-medium text-gray-600">Lokasi Aktif</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="activeLocations">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-50">
+                            <span class="mdi mdi-store-check text-xl text-green-600"></span>
+                        </div>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <p class="text-sm font-medium text-gray-600">Lokasi Tidak Aktif</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="inactiveLocations">0</p>
                     </div>
                 </div>
             </div>
@@ -134,7 +147,7 @@
                                 <th>Nama Lokasi</th>
                                 <th>Cabang</th>
                                 <th>Tipe</th>
-                                <th>Status Cabang</th>
+                                <th>Status Lokasi</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -227,8 +240,8 @@
                         }
                     },
                     {
-                        data: 'branch.status',
-                        name: 'branch.status',
+                        data: 'status',
+                        name: 'status',
                         render: function(data) {
                             if (data == 'active') {
                                 return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -258,11 +271,13 @@
 
         function updateStats() {
             const table = $('#adminTable').DataTable();
-            const totalRecords = table.page.info().recordsTotal;
-
+            const data = table.rows().data().toArray();
+            const totalRecords = data.length;
+            const inactiveRecords = data.filter(row => row.status === 'inactive').length;
+            const activeRecords = totalRecords - inactiveRecords;
             $('#totalLocations').text(totalRecords);
-            // $('#locationTypes').text('5'); // Assuming 5 types for demo
-            $('#activeBranches').text(totalRecords); // Assuming all branches are active
+            $('#activeLocations').text(activeRecords);
+            $('#inactiveLocations').text(inactiveRecords);
 
             const now = new Date();
             $('#lastUpdated').text(now.toLocaleTimeString('id-ID', {

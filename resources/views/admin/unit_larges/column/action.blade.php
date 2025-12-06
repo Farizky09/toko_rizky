@@ -1,6 +1,6 @@
 <div class="flex items-center justify-center gap-2">
     @canany(['update_unit_larges'])
-        <a href="{{ route('unit_larges.edit', $data->id) }}"
+        <a href="{{ route('unit-larges.edit', $data->id) }}"
             class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition-colors duration-200"
             title="Edit Satuan Besar">
             <span class="mdi mdi-pencil-outline"></span>
@@ -17,7 +17,7 @@
             Hapus
         </button>
 
-        <form action="{{ route('unit_larges.delete', $data->id) }}" method="POST" id="delete-form-{{ $data->id }}"
+        <form action="{{ route('unit-larges.delete', $data->id) }}" method="POST" id="delete-form-{{ $data->id }}"
             class="hidden">
             @csrf
             @method('DELETE')

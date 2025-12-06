@@ -29,6 +29,10 @@ class SuppliersController extends Controller
                 ->addColumn('phone', function ($data) {
                     return $data->phone;
                 })
+                ->addColumn('status', function ($data) {
+                    return $data->status;
+                })
+
                 ->addColumn('action', function ($data) {
                     return view('admin.suppliers.column.action', compact('data'));
                 })
