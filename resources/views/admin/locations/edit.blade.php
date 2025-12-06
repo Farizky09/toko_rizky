@@ -113,14 +113,16 @@
                                     <div class="mb-3">
                                         <label class="form-label text-gray-700">Dibuat Pada</label>
                                         <input type="text" class="form-control bg-light"
-                                            value="{{ $data->created_at->translatedFormat('d F Y H:i') }}" readonly>
+                                            value="{{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d F Y H:i') }}"
+                                            readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label text-gray-700">Diperbarui Pada</label>
                                         <input type="text" class="form-control bg-light"
-                                            value="{{ $data->updated_at->translatedFormat('d F Y H:i') }}" readonly>
+                                            value="{{ \Carbon\Carbon::parse($data->updated_at)->translatedFormat('d F Y H:i') }}"
+                                            readonly>
                                     </div>
                                 </div>
                             </div>
@@ -224,14 +226,14 @@
                                 <i class="mdi mdi-calendar-plus me-3 text-success"></i>
                                 <div>
                                     <strong>Dibuat:</strong><br>
-                                    {{ $data->created_at->diffForHumans() }}
+                                    {{ \Carbon\Carbon::parse($data->created_at)->diffForHumans() }}
                                 </div>
                             </div>
                             <div class="d-flex align-items-center">
                                 <i class="mdi mdi-calendar-edit me-3 text-info"></i>
                                 <div>
                                     <strong>Diperbarui:</strong><br>
-                                    {{ $data->updated_at->diffForHumans() }}
+                                    {{ \Carbon\Carbon::parse($data->updated_at)->diffForHumans() }}
                                 </div>
                             </div>
                         </div>
@@ -319,7 +321,7 @@
                 requiredFields.forEach(field => {
                     if (field) {
                         const value = field.type === 'select-one' ? field.value : field.value
-                    .trim();
+                            .trim();
                         if (!value) {
                             field.classList.add('is-invalid');
                             if (!hasError) {
