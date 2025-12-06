@@ -10,4 +10,5 @@ interface SuppliersInterfaces
     public function update($data, $id);
     public function delete($id);
     public function datatable();
+    public function historyTransactions($id);
 }

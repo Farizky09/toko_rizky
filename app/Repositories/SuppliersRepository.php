@@ -62,4 +62,12 @@ class SuppliersRepository implements SuppliersInterfaces
     {
         return $this->suppliers->orderBy('created_at', 'desc')->get();
     }
+
+    public function historyTransactions($id)
+    {
+        return DB::table('purchases')
+            ->where('supplier_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
 }

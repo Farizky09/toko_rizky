@@ -55,10 +55,10 @@ class UserManagementController extends Controller
 
         try {
             $this->userManagement->store($data);
-            return redirect()->route('user_management.index')->with('success', 'User berhasil dibuat.');
+            return redirect()->route('user-management.index')->with('success', 'User berhasil dibuat.');
         } catch (\Throwable $th) {
             dd($th);
-            return redirect()->route('user_management.create')->with('error', 'User gagal dibuat: ' . $th->getMessage());
+            return redirect()->route('user-management.create')->with('error', 'User gagal dibuat: ' . $th->getMessage());
         }
     }
     public function show($id)
@@ -84,18 +84,18 @@ class UserManagementController extends Controller
 
         try {
             $this->userManagement->update($data, $id);
-            return redirect()->route('user_management.index')->with('success', 'User berhasil diperbarui.');
+            return redirect()->route('user-management.index')->with('success', 'User berhasil diperbarui.');
         } catch (\Throwable $th) {
-            return redirect()->route('user_management.edit', $id)->with('error', 'User gagal diperbarui: ' . $th->getMessage());
+            return redirect()->route('user-management.edit', $id)->with('error', 'User gagal diperbarui: ' . $th->getMessage());
         }
     }
     public function delete($id)
     {
         try {
             $this->userManagement->delete($id);
-            return redirect()->route('user_management.index')->with('success', 'User berhasil dihapus.');
+            return redirect()->route('user-management.index')->with('success', 'User berhasil dihapus.');
         } catch (\Throwable $th) {
-            return redirect()->route('user_management.index')->with('error', 'User gagal dihapus: ' . $th->getMessage());
+            return redirect()->route('user-management.index')->with('error', 'User gagal dihapus: ' . $th->getMessage());
         }
         // try {
         //     $this->userManagement->delete($id);
@@ -113,9 +113,9 @@ class UserManagementController extends Controller
 
         try {
             $this->userManagement->updatePermission($data, $id);
-            return redirect()->route('user_management.index')->with('success', 'Permissions berhasil diperbarui.');
+            return redirect()->route('user-management.index')->with('success', 'Permissions berhasil diperbarui.');
         } catch (\Throwable $th) {
-            return redirect()->route('user_management.edit', $id)->with('error', 'Permissions gagal diperbarui: ' . $th->getMessage());
+            return redirect()->route('user-management.edit', $id)->with('error', 'Permissions gagal diperbarui: ' . $th->getMessage());
         }
     }
     public function resetPassword($id)

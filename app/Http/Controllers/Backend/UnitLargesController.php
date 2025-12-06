@@ -45,11 +45,11 @@ class UnitLargesController extends Controller
         try {
             $this->untiLargesRepository->store($request->validated());
             return redirect()
-                ->route('unit_larges.index')
+                ->route('unit-larges.index')
                 ->with('success', 'Satuan Besar berhasil dibuat.');
         } catch (\Exception $e) {
             return redirect()
-                ->route('unit_larges.create')
+                ->route('unit-larges.create')
                 ->with('error', 'Satuan Besar gagal dibuat: ' . $e->getMessage());
         }
     }
@@ -71,11 +71,11 @@ class UnitLargesController extends Controller
         try {
             $this->untiLargesRepository->update($id, $request->validated());
             return redirect()
-                ->route('unit_larges.index')
+                ->route('unit-larges.index')
                 ->with('success', 'Satuan Besar berhasil diperbarui.');
         } catch (\Exception $e) {
             return redirect()
-                ->route('unit_larges.edit', $id)
+                ->route('unit-larges.edit', $id)
                 ->with('error', 'Satuan Besar gagal diperbarui: ' . $e->getMessage());
         }
     }
@@ -86,11 +86,11 @@ class UnitLargesController extends Controller
         try {
             $this->untiLargesRepository->delete($id);
             return redirect()
-                ->route('unit_larges.index')
+                ->route('unit-larges.index')
                 ->with('success', 'Satuan Besar berhasil dihapus.');
         } catch (\Exception $e) {
             return redirect()
-                ->route('unit_larges.index')
+                ->route('unit-larges.index')
                 ->with('error', 'Satuan Besar gagal dihapus: ' . $e->getMessage());
         }
     }

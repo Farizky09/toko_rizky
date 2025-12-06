@@ -44,7 +44,7 @@ class UnitSmallsController extends Controller
 
         try {
             $this->unitSmalls->store($data);
-            return redirect()->route('unit_smalls.index')->with('success', 'Satuan Kecil berhasil dibuat.');
+            return redirect()->route('unit-smalls.index')->with('success', 'Satuan Kecil berhasil dibuat.');
         } catch (\Throwable $th) {
             return redirect()->route('error', 'Satuan Kecil gagal dibuat: ' . $th->getMessage());
         }
@@ -69,7 +69,7 @@ class UnitSmallsController extends Controller
 
         try {
             $this->unitSmalls->update($id, $data);
-            return redirect()->route('unit_smalls.index')->with('success', 'Satuan Kecil berhasil diperbarui.');
+            return redirect()->route('unit-smalls.index')->with('success', 'Satuan Kecil berhasil diperbarui.');
         } catch (\Throwable $th) {
             return redirect()->route('error', 'Satuan Kecil gagal diperbarui: ' . $th->getMessage());
         }
@@ -80,7 +80,7 @@ class UnitSmallsController extends Controller
 
         try {
             $this->unitSmalls->delete($id);
-            return redirect()->route('unit_smalls.index')->with('success', 'Satuan Kecil berhasil dihapus.');
+            return redirect()->route('unit-smalls.index')->with('success', 'Satuan Kecil berhasil dihapus.');
         } catch (\Throwable $th) {
             return redirect()->route('error', 'Satuan Kecil gagal dihapus: ' . $th->getMessage());
         }

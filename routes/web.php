@@ -44,7 +44,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/update/{id}', [RoleController::class, 'update'])->middleware('permission:update_role')->name('update');
             Route::delete('/delete/{id}', [RoleController::class, 'delete'])->middleware('permission:delete_role')->name('delete');
         });
-        Route::prefix('user-management')->name('user_management.')->group(function () {
+        Route::prefix('user-management')->name('user-management.')->group(function () {
             Route::get('/', [UserManagementController::class, 'index'])->middleware('permission:read_user_management')->name('index');
             Route::get('/create', [UserManagementController::class, 'create'])->middleware('permission:create_user_management')->name('create');
             Route::post('/store', [UserManagementController::class, 'store'])->middleware('permission:create_user_management')->name('store');
@@ -62,7 +62,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/update/{id}', [CategoriesController::class, 'update'])->middleware('permission:update_categories')->name('update');
             Route::delete('/delete/{id}', [CategoriesController::class, 'delete'])->middleware('permission:delete_categories')->name('delete');
         });
-        Route::prefix('unit-larges')->name('unit_larges.')->group(function () {
+        Route::prefix('unit-larges')->name('unit-larges.')->group(function () {
             Route::get('/', [UnitLargesController::class, 'index'])->middleware('permission:read_unit_larges')->name('index');
             Route::get('/create', [UnitLargesController::class, 'create'])->middleware('permission:create_unit_larges')->name('create');
             Route::post('/store', [UnitLargesController::class, 'store'])->middleware('permission:create_unit_larges')->name('store');
@@ -71,7 +71,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/update/{id}', [UnitLargesController::class, 'update'])->middleware('permission:update_unit_larges')->name('update');
             Route::delete('/delete/{id}', [UnitLargesController::class, 'delete'])->middleware('permission:delete_unit_larges')->name('delete');
         });
-        Route::prefix('unit-smalls')->name('unit_smalls.')->group(function () {
+        Route::prefix('unit-smalls')->name('unit-smalls.')->group(function () {
             Route::get('/', [UnitSmallsController::class, 'index'])->middleware('permission:read_unit_smalls')->name('index');
             Route::get('/create', [UnitSmallsController::class, 'create'])->middleware('permission:create_unit_smalls')->name('create');
             Route::post('/store', [UnitSmallsController::class, 'store'])->middleware('permission:create_unit_smalls')->name('store');
