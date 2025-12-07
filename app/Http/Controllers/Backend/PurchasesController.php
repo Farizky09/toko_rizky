@@ -211,7 +211,7 @@ class PurchasesController extends Controller
     {
         try {
             $receive = $this->purchasesRepository->receivePurchase($id, $request->validated());
-            dd($receive);
+            // dd($receive);
             return redirect()
                 ->route('purchases.index')
                 ->with('success', 'Barang berhasil diterima dan stok telah ditambahkan.');
