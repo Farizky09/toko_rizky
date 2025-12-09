@@ -178,28 +178,46 @@ class PurchasesRepository implements PurchasesInterfaces
         return DB::transaction(function () use ($id, $receivedData) {
             $purchase = Purchases::with('purchasesItems')->findOrFail($id);
 
-            if ($purchase->status !== 'draft') {
+            if (!in_array($purchase->status, ['draft', 'pending'])) {
                 throw new \Exception('Pembelian ini sudah diproses atau dibatalkan.');
             }
-
+            $allStatusReceived = true;
             foreach ($receivedData['items'] as $itemId => $itemData) {
-                $itemId = (int) $itemId;
-                $item = $purchase->purchasesItems->firstWhere('id', $itemId);
-
-                if ($item) {
-                    $item->update([
-                        'qty_received_large' => (float)($itemData['qty_received_large'] ?? 0),
-                        'qty_received_small' => (float)($itemData['qty_received_small'] ?? 0),
-                        'item_notes' => $itemData['item_notes'] ?? null,
-                    ]);
+                $purchaseItem = $purchase->purchasesItems->where('id', $itemId)->first();
+                if (!$purchaseItem) {
+                    throw new \Exception("Item pembelian dengan ID {$itemId} tidak ditemukan.");
                 }
+                $tempQtyReceivedLarge = (float) ($itemData['qty_received_large'] ?? 0);
+                $tempQtyReceivedSmall = (float) ($itemData['qty_received_small'] ?? 0);
+
+                if ($tempQtyReceivedLarge < 0 || $tempQtyReceivedSmall < 0) {
+                    throw new \Exception("Jumlah diterima tidak boleh negatif untuk item ID {$itemId}.");
+                }
+                $remainingQtyLarge = $purchaseItem->qty_large - $purchaseItem->qty_received_large;
+                $remainingQtySmall = $purchaseItem->qty_small - $purchaseItem->qty_received_small;
+
+                if ($tempQtyReceivedLarge > $remainingQtyLarge || $tempQtyReceivedSmall > $remainingQtySmall) {
+                    throw new \Exception("Jumlah diterima melebihi jumlah yang dipesan untuk item ID {$itemId}.");
+                }
+
+                $purchaseItem->qty_received_large += $tempQtyReceivedLarge;
+                $purchaseItem->qty_received_small += $tempQtyReceivedSmall;
+                $purchaseItem->save();
+
+                if (
+                    $purchaseItem->qty_received_large < $purchaseItem->qty_large ||
+                    $purchaseItem->qty_received_small < $purchaseItem->qty_small
+                ) {
+                    $allStatusReceived = false;
+                }
+                if (!$allStatusReceived) {
+                    $purchase->status = 'partial';
+                } else {
+                    $purchase->status = 'completed';
+                }
+                $purchase->save();
+                $this->processStockIn($purchase);
             }
-
-            $this->processStockIn($purchase);
-
-
-            $purchase->status = 'completed';
-            $purchase->save();
 
             return $purchase;
         });
