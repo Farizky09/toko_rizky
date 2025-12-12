@@ -28,11 +28,16 @@ Roadmap ini digunakan untuk mencatat progress selama pengembangan modul aplikasi
 
 ## 1. Purchase Order (PO) Module — Fix & Refactor
 
-Refactor Pembelian (PO → GR)
+Lanjutan Purchase Order dan Good Receipt
 
 -   [ ] Ubah konsep pembelian menjadi 2 tahap: Purchase Order (PO) dan Good Receipt (GR)
 -   [ ] Modify tabel `purchase_orders`
--   [ ] Buat tabel baru: `purchase_order_items`, `good_receipts`, `good_receipt_items`
+-   [12/12/25 ] Buat tabel baru: `good_receipts`, `good_receipt_items`
+-   [13/12/25] Buat model 'GoodReceipt', `GoodReceiptItems'
+-   [ ] Membuat Repository dan interface Goodreceipt
+-   [ ] Membuat Controller untuk Goodreceipt
+-   [ ] Route untuk Goodreceipt
+-   [ ] View untuk Goodreceipt
 -   [ ] Perbaikan di PurchasesRepository dan alur pembelian
 -   [ ] Penyesuaian harga COGS berdasarkan FIFO/FEFO
 -   [ ] Sinkronisasi numbering, approval, dan status PO/GR
@@ -162,3 +167,11 @@ Refactor Pembelian (PO → GR)
 4. Laporan & Dashboard
 5. Karyawan & Shift
 6. Landing Page → Checkout → Payment Gateway
+
+notes :
+12/12/25 dan 13/12/25
+
+-   sekarang konsep nya tidak one way lagi alias harus dipecah menjadi Purchase order (PO) dan Goodreceipt (GR)
+-   Purchase order hanya diperuntukkan untuk pemesanan saja, dan disini sudah ditetapkan terkait harga beli dan jual nya
+-   sehingga, Goodreceipt ini hanya dipergunakan untuk mengecek kedatangan barang dan exp nya saja
+-   qty received ada di po untuk apa? agar dia bisa akumulasi dari qty received tiap goodreceipt nya
