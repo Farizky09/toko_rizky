@@ -1,49 +1,164 @@
-Aplikasi toko Lengkap
+# Aplikasi Toko Lengkap — POS & Ecommerce
 
-aplikasi ini memiliki 2 sistem yaitu manajemen toko lengkap dan ecommerce di landing page agar customer bisa melakukan pembelian atau cehckout barang secara langsung dan pembayaran terintegrasi dengan midtrans atau xendit
+Laravel | Tailwind | Breeze | Spatie Role | Yajra Datatable | Midtrans/Xendit
 
-role:
+Aplikasi toko lengkap dengan modul Point of Sale (POS) dan Ecommerce Landing Page.
+Mendukung multi cabang, manajemen stok lengkap (FIFO/FEFO), batch & expiry, kasir, laporan, dan integrasi payment gateway.
 
-1. admin (all Akses)
-2. Owner (laporan dan manajemen toko)
-3. kasir (transaksi penjualan)
-4. inventory staff (pengelolaan stock atau barang )
+---
 
-techstack
+## Tech Stack
 
-1. php : PHP 8.2.12 (cli) (built: Oct 24 2023 21:15:15) (ZTS Visual C++ 2019 x64)
-   Copyright (c) The PHP Group
-   Zend Engine v4.2.12, Copyright (c) Zend Technologies
-2. Framework = Laravel
-3. css = Tailwind
-4. role akses = Laravel Spatie
-5. Auth = Laravel Breeze
-6. Datatable = Yajra
-7. npm = 10.9.2
+-   PHP 8.2.12
+-   Laravel
+-   TailwindCSS
+-   Laravel Breeze
+-   Spatie Permission
+-   Yajra Datatable
+-   NPM 10.9.2
+-   Payment Gateway: Midtrans / Xendit
 
-Requirements
+---
 
-1. restok barang dan jual barang
-2. pembelian (restok) dan penjualan barang bisa satuan kecil dan satuan besar
-3. multi cabang
-4. FIFO atau FEFO (fokus ke exp)
-5. harga ditentukan berdasarkan saat restok
+# Project Roadmap / To-Do List
 
-Task berikut nya:
+Roadmap ini digunakan untuk mencatat progress selama pengembangan modul aplikasi.
 
-1. Fix bug di Purchases order
-2. fix bug at receive
-3. add alert saat stock menipis
-4.
+---
 
-Setelah purchase order selesai -> stock movement (transfer stock, adjustment, opname)-> kasier (penjualan)-> shift dan sesuai cabang (penempatan)->Laporan -> landing page ecommerce-> sistem checkout -> integrasi payment gateway ->dashboard
+## 1. Purchase Order (PO) Module — Fix & Refactor
 
-penjualan -> tampilan kasir
-history penjualan -> kasir saat itu (per hari)
+Refactor Pembelian (PO → GR)
 
-history penjualan pembelian-> di admin dan di owner
+-   [ ] Ubah konsep pembelian menjadi 2 tahap: Purchase Order (PO) dan Good Receipt (GR)
+-   [ ] Modify tabel `purchase_orders`
+-   [ ] Buat tabel baru: `purchase_order_items`, `good_receipts`, `good_receipt_items`
+-   [ ] Perbaikan di PurchasesRepository dan alur pembelian
+-   [ ] Penyesuaian harga COGS berdasarkan FIFO/FEFO
+-   [ ] Sinkronisasi numbering, approval, dan status PO/GR
 
-saran mas hakim:
-setelah purchase order selesai -> stock movement -> penjualan kasir -> report dan dashboard
-jika sudah bisa lanjut ke
-karywan atau kasir (shift dan penempatan )
+---
+
+## 2. Good Receipt (Receive) Module
+
+-   [ ] Perbaikan bug receive barang
+-   [ ] Validasi kuantitas (PO qty vs GR qty)
+-   [ ] FEFO (expiry-based): pemilihan batch otomatis
+-   [ ] Update stok saat GR selesai
+-   [ ] Tambah alert jika GR melebihi PO
+-   [ ] Tampilkan history batch dan expiry
+
+---
+
+## 3. Alert Stock Menipis
+
+-   [ ] Tambah kolom minimal stock pada item
+-   [ ] Menampilkan alert pada dashboard admin
+-   [ ] Notifikasi UI saat stok menipis
+-   [ ] Penandaan barang di inventory
+-   [ ] Integrasi alert pada penjualan dan stock movement
+
+---
+
+## 4. Stock Movement Module
+
+### 4.1 Transfer Antar Cabang
+
+-   [ ] Form request transfer
+-   [ ] Approval transfer
+-   [ ] Stock out cabang A → Stock in cabang B
+-   [ ] Riwayat transfer
+
+### 4.2 Stock Adjustment
+
+-   [ ] Penyesuaian stok (selisih, rusak, kadaluwarsa)
+-   [ ] Log user dan alasan adjustment
+
+### 4.3 Stock Opname
+
+-   [ ] Input stok fisik
+-   [ ] Hitung selisih otomatis
+-   [ ] Generate adjustment otomatis
+
+---
+
+## 5. Penjualan (Kasir)
+
+### Tampilan Kasir
+
+-   [ ] UI kasir cepat
+-   [ ] Scan barcode
+-   [ ] Pemilihan batch otomatis (FIFO/FEFO)
+-   [ ] Harga mengikuti batch restok
+-   [ ] Metode pembayaran: cash, QRIS/e-wallet
+
+### History Penjualan
+
+-   [ ] History per kasir per hari
+-   [ ] Rekap shift kasir
+
+---
+
+## 6. Karyawan & Shift
+
+-   [ ] CRUD karyawan
+-   [ ] Penempatan karyawan per cabang
+-   [ ] Sistem shift kasir
+-   [ ] Log aktivitas kasir
+
+---
+
+## 7. Laporan & Dashboard
+
+-   [ ] Laporan penjualan
+-   [ ] Laporan pembelian
+-   [ ] Laporan stok masuk/keluar
+-   [ ] Laporan expiry dan batch
+-   [ ] Dashboard grafik dan summary
+-   [ ] Laporan profit (COGS per batch)
+
+---
+
+## 8. Ecommerce Landing Page
+
+### Frontend
+
+-   [ ] Landing page produk
+-   [ ] Detail produk
+-   [ ] Keranjang (cart)
+-   [ ] Checkout
+
+### Checkout Engine
+
+-   [ ] Harga berdasarkan batch termurah (FIFO)
+-   [ ] Pilihan cabang untuk pick-up (opsional)
+-   [ ] Validasi stok realtime
+
+---
+
+## 9. Payment Gateway
+
+-   [ ] Integrasi Midtrans atau Xendit
+-   [ ] Implementasi callback untuk update status pembayaran
+-   [ ] Generate invoice otomatis
+-   [ ] Riwayat order customer
+
+---
+
+## 10. Finalization & QA
+
+-   [ ] Review role & permission (Spatie)
+-   [ ] Pengujian end-to-end: PO → GR → Movement → Penjualan → Laporan
+-   [ ] Deployment
+-   [ ] Perbaikan bug dan polishing akhir
+
+---
+
+## Urutan Pengerjaan (Saran Mas Hakim)
+
+1. Purchase Order → Good Receipt
+2. Stock Movement
+3. Penjualan (Kasir)
+4. Laporan & Dashboard
+5. Karyawan & Shift
+6. Landing Page → Checkout → Payment Gateway
