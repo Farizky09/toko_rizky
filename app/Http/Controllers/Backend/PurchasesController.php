@@ -19,44 +19,31 @@ class PurchasesController extends Controller
 
     public function index(Request $request)
     {
+        $data = $this->purchasesRepository->datatable();
+        // dd($data->get());
 
-        // dd($this->purchasesRepository->datatable()->get());
         if ($request->ajax()) {
             $data = $this->purchasesRepository->datatable();
-
-
-            $statusConfig = [
-                'draft' => ['class' => 'bg-amber-100 text-amber-800', 'icon' => 'mdi-pencil', 'label' => 'Draft'],
-                'completed' => ['class' => 'bg-green-100 text-green-800', 'icon' => 'mdi-check-circle', 'label' => 'Completed'],
-                'cancelled' => ['class' => 'bg-red-100 text-red-800', 'icon' => 'mdi-close-circle', 'label' => 'Cancelled']
-            ];
-
             return datatables()->of($data)
-                ->addColumn('purchase_number', function ($data) {
-                    return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">' . $data->purchase_number . '</span>';
-                })
+                ->addColumn('purchase_number', fn($data) => $data->purchase_number)
                 ->addColumn('supplier_name', fn($data) => $data->supplier_name ?? '-')
                 ->addColumn('branch_name', fn($data) => $data->branch_name ?? '-')
-                ->addColumn('purchase_date', fn($data) => date('d/m/Y', strtotime($data->purchase_date)))
-                ->addColumn('total_quantity', function ($data) {
-                    $total = ($data->total_quantity_large ?? 0) + ($data->total_quantity_small ?? 0);
-                    return '<span class="font-medium">' . $total . '</span>';
-                })
-                ->addColumn('total_amount', fn($data) => 'Rp ' . number_format($data->total_amount, 0, ',', '.'))
-                ->addColumn('status', function ($data) use ($statusConfig) {
-                    $config = $statusConfig[$data->status] ?? $statusConfig['draft'];
-                    return '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ' . $config['class'] . '">
-                                <span class="mdi ' . $config['icon'] . '"></span>
-                                ' . $config['label'] . '
-                            </span>';
-                })
-                ->addColumn('user_name', fn($data) => $data->user_name ?? '-')
+                ->addColumn(
+                    'purchase_date',
+                    fn($data) =>
+                    date('Y-m-d', strtotime($data->purchase_date))
+                )
+                ->addColumn('total_items', fn($data) => $data->total_items ?? 0)
+                ->addColumn('total_quantity_large', fn($data) => $data->total_quantity_large ?? 0)
+                ->addColumn('total_quantity_small', fn($data) => $data->total_quantity_small ?? 0)
+                ->addColumn('total_quantitiy', fn($data) => ($data->total_quantity_large ?? 0) + ($data->total_quantity_small ?? 0))
+                ->addColumn('total_amount', fn($data) => (int) $data->total_amount)
+                ->addColumn('status', fn($data) => $data->status)
                 ->addColumn('action', function ($data) {
-                    // Tombol aksi sekarang akan bergantung pada status
                     return view('admin.purchases.column.action', compact('data'));
                 })
+
                 ->addIndexColumn()
-                ->rawColumns(['purchase_number', 'total_quantity', 'total_amount', 'status', 'action'])
                 ->make(true);
         }
         return view('admin.purchases.index');
@@ -120,7 +107,6 @@ class PurchasesController extends Controller
     public function show($id)
     {
         $purchase = $this->purchasesRepository->getById($id);
-        // dd($purchase->purchasesItems);
         if (!$purchase) {
             return redirect()->route('purchases.index')->with('error', 'Data pembelian tidak ditemukan.');
         }
@@ -141,8 +127,6 @@ class PurchasesController extends Controller
 
         $branches = DB::table('branches')->where('status', 'active')->get();
         $suppliers = DB::table('suppliers')->where('status', 'active')->get();
-
-
         $locations = DB::table('locations')->get()->groupBy('branch_id');
 
         $latestBatchIds = DB::table('batches')
@@ -187,39 +171,6 @@ class PurchasesController extends Controller
             return redirect()
                 ->route('purchases.edit', $id)
                 ->with('error', 'PO Draft gagal diperbarui: ' . $e->getMessage());
-        }
-    }
-
-    public function showReceiveForm($id)
-    {
-        $purchase = $this->purchasesRepository->getById($id);
-
-        if (!$purchase) {
-            return redirect()->route('purchases.index')->with('error', 'Data pembelian tidak ditemukan.');
-        }
-
-
-        if ($purchase->status !== 'draft') {
-            return redirect()->route('purchases.index')->with('error', 'Hanya PO status "Draft" yang bisa diterima.');
-        }
-
-        return view('admin.purchases.receive', compact('purchase'));
-    }
-
-
-    public function processReceive($id, ReceivePurchaseRequest $request)
-    {
-        try {
-            $receive = $this->purchasesRepository->receivePurchase($id, $request->validated());
-            // dd($receive);
-            return redirect()
-                ->route('purchases.index')
-                ->with('success', 'Barang berhasil diterima dan stok telah ditambahkan.');
-        } catch (\Exception $e) {
-            dd($e);
-            return redirect()
-                ->route('purchases.receive-form', $id)
-                ->with('error', 'Gagal memproses penerimaan: ' . $e->getMessage());
         }
     }
 

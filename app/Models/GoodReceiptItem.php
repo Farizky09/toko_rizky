@@ -40,7 +40,8 @@ class GoodReceiptItem extends Model
     /**
      * Relasi ke Purchase Item (Detail PO)
      * PENTING: Foreign key didefinisikan sebagai 'purchase_items_id'
-     * sesuai dengan kolom di database Anda.
+     * sesuai dengan kolom di database Anda.b
+     * 
      */
     public function purchaseItem()
     {

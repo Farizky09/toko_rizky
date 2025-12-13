@@ -244,7 +244,7 @@
                         name: 'total_items',
                         render: function(data) {
                             return `<div class="text-center">
-                                <span class="font-mono font-medium text-gray-900">${parseInt(data || 0).toLocaleString('id-ID')}</span>
+                                <span class=" font-medium text-gray-900">${parseInt(data || 0).toLocaleString('id-ID')}</span>
                                 <div class="text-xs text-gray-500">items</div>
                             </div>`;
                         }
@@ -253,10 +253,10 @@
                         data: null,
                         name: 'total_quantity',
                         render: function(data, type, row) {
-                            const total = (row.total_quantity_large || 0) + (row
-                                .total_quantity_small || 0);
+                            const total = (parseInt(row.total_quantity_large || 0) + parseInt(row
+                                .total_quantity_small || 0));
                             return `<div class="text-center">
-                                <span class="font-mono font-medium text-gray-900">${parseInt(total).toLocaleString('id-ID')}</span>
+                                <span class=" font-medium text-gray-900">${parseInt(total).toLocaleString('id-ID')}</span>
                                 <div class="text-xs text-gray-500">quantity</div>
                             </div>`;
                         }
@@ -265,15 +265,9 @@
                         data: 'total_amount',
                         name: 'total_amount',
                         render: function(data) {
-                            const formattedAmount = new Intl.NumberFormat('id-ID', {
-                                style: 'currency',
-                                currency: 'IDR',
-                                minimumFractionDigits: 0,
-                                maximumFractionDigits: 0
-                            }).format(data || 0);
-
-                            return `<div class="text-right">
-                                <div class="font-medium text-gray-900">${formattedAmount}</div>
+                            const amount = parseFloat(data || 0);
+                            return `<div class="text-center">
+                                <span class=" font-medium text-gray-900">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount)}</span>
                                 <div class="text-xs text-gray-500">total</div>
                             </div>`;
                         }
@@ -281,7 +275,35 @@
                     {
                         data: 'status',
                         name: 'status',
-                       
+                        render: function(data) {
+                            let badgeClass = 'bg-gray-100 text-gray-800';
+                            let statusText = data || 'unknown';
+
+                            switch (data) {
+                                case 'draft':
+                                    badgeClass = 'bg-amber-100 text-amber-800';
+                                    statusText = 'Draft';
+                                    break;
+                                case 'partial':
+                                    badgeClass = 'bg-blue-100 text-blue-800';
+                                    statusText = 'Partial';
+                                    break;
+                                case 'completed':
+                                    badgeClass = 'bg-green-100 text-green-800';
+                                    statusText = 'Completed';
+                                    break;
+                                case 'cancelled':
+                                    badgeClass = 'bg-red-100 text-red-800';
+                                    statusText = 'Cancelled';
+                                    break;
+                            }
+
+                            return `<div class="text-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badgeClass}">
+                                    ${statusText}
+                                </span>
+                            </div>`;
+                        }
                     },
                     {
                         data: 'action',
@@ -311,7 +333,7 @@
                 cancelButtonText: 'Tutup'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('cancel-form-' + id).submit();
+                    document.getElementById('destroy-form-' + id).submit();
                 }
             });
         }

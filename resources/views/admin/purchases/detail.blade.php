@@ -368,9 +368,9 @@
 
                             @if ($purchase->status == 'draft')
                                 <!-- Aksi untuk 'Draft' -->
-                                <a href="{{ route('purchases.receive-form', $purchase->id) }}" class="btn btn-success">
+                                {{-- <a href="{{ route('purchases.receive-form', $purchase->id) }}" class="btn btn-success">
                                     <i class="mdi mdi-truck-check-outline me-2"></i>Terima Barang
-                                </a>
+                                </a> --}}
                                 <a href="{{ route('purchases.edit', $purchase->id) }}" class="btn btn-warning">
                                     <i class="mdi mdi-pencil-outline me-2"></i>Edit Pembelian
                                 </a>
@@ -409,7 +409,7 @@
         <form action="{{ route('purchases.cancel', $purchase->id) }}" method="POST"
             id="cancel-form-{{ $purchase->id }}" class="d-none">
             @csrf
-            @method('DELETE')
+            @method('PUT')
         </form>
     @endif
     @if ($purchase->status == 'cancelled')
@@ -481,6 +481,9 @@
          * Konfirmasi untuk membatalkan (mengubah status ke 'cancelled')
          */
         function confirmCancel(id, purchaseNumber) {
+
+            console.log('Confirm Cancel:', id, purchaseNumber);
+            // console.log('Form Element:', document.getElementById('cancel-form-' + id));
             Swal.fire({
                 title: `Batalkan Pembelian "${purchaseNumber}"?`,
                 text: "PO akan diubah statusnya menjadi 'Cancelled'.",
@@ -512,8 +515,7 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('destroy-form-'
-                        t + id).submit();
+                    document.getElementById('destroy-form-' + id).submit();
                 }
             });
         }

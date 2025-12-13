@@ -125,7 +125,23 @@ class PurchasesRepository implements PurchasesInterfaces
                     'notes' => $data['notes'] ?? null,
                 ]);
 
-                $this->savePurchaseItemsOnly($purchase, $data['items']);
+                foreach ($data['items'] as $itemData) {
+                    PurchasesItems::create([
+                        'purchase_id' => $purchase->id,
+                        'product_id' => $itemData['product_id'],
+                        'qty_large' => $itemData['qty_large'] ?? 0,
+                        'qty_small' => $itemData['qty_small'] ?? 0,
+                        'selling_price_large' => $itemData['selling_price_large'] ?? 0,
+                        'selling_price_small' => $itemData['selling_price_small'] ?? 0,
+                        'qty_received_large' => $itemData['qty_received_large'] ?? 0,
+                        'qty_received_small' => $itemData['qty_received_small'] ?? 0,
+                        'purchase_price_large' => $itemData['purchase_price_large'] ?? 0,
+                        'purchase_price_small' => $itemData['purchase_price_small'] ?? 0,
+                        'subtotal' => ((int)($itemData['qty_large'] ?? 0) * (float)($itemData['purchase_price_large'] ?? 0)) +
+                            ((int)($itemData['qty_small'] ?? 0) * (float)($itemData['purchase_price_small'] ?? 0)),
+                        'item_notes' => $itemData['item_notes'] ?? null,
+                    ]);
+                }
 
                 return $purchase;
             } catch (\Exception $e) {
@@ -142,6 +158,11 @@ class PurchasesRepository implements PurchasesInterfaces
             if ($purchase->status !== 'draft') {
                 throw new \Exception('Hanya pembelian dengan status "draft" yang bisa di-update.');
             }
+            $purchase->branch_id = $data['branch_id'] ?? $purchase->branch_id;
+            $purchase->location_id = $data['location_id'] ?? $purchase->location_id;
+            $purchase->supplier_id = $data['supplier_id'] ?? $purchase->supplier_id;
+            $purchase->purchase_date = $data['purchase_date'] ?? $purchase->purchase_date;
+            $purchase->notes = $data['notes'] ?? $purchase->notes;
 
             $totalItems = count($data['items']);
             $totalQtyLarge = collect($data['items'])->sum(fn($item) => (int) ($item['qty_large'] ?? 0));
@@ -151,74 +172,37 @@ class PurchasesRepository implements PurchasesInterfaces
             $discount = (float) ($data['discount'] ?? 0);
             $totalAmount = $this->calculateTotalAmount($data['items'], $tax, $discount);
 
-            $purchase->update([
-                'branch_id' => $data['branch_id'],
-                'location_id' => $data['location_id'],
-                'supplier_id' => $data['supplier_id'],
-                'purchase_date' => $data['purchase_date'],
-                'total_items' => $totalItems,
-                'total_quantity_large' => $totalQtyLarge,
-                'total_quantity_small' => $totalQtySmall,
-                'subtotal' => $subtotal,
-                'tax' => $tax,
-                'discount' => $discount,
-                'total_amount' => $totalAmount,
-                'notes' => $data['notes'] ?? null,
-            ]);
+            $purchase->total_items = $totalItems;
+            $purchase->total_quantity_large = $totalQtyLarge;
+            $purchase->total_quantity_small = $totalQtySmall;
+            $purchase->subtotal = $subtotal;
+            $purchase->tax = $tax;
+            $purchase->discount = $discount;
+            $purchase->total_amount = $totalAmount;
 
-            $purchase->purchasesItems()->delete();
-            $this->savePurchaseItemsOnly($purchase, $data['items']);
+            $purchase->save();
 
-            return $purchase;
-        });
-    }
+            // Hapus item lama
+            PurchasesItems::where('purchase_id', $purchase->id)->delete();
 
-    public function receivePurchase($id, $receivedData)
-    {
-        return DB::transaction(function () use ($id, $receivedData) {
-            $purchase = Purchases::with('purchasesItems')->findOrFail($id);
-
-            if (!in_array($purchase->status, ['draft', 'pending'])) {
-                throw new \Exception('Pembelian ini sudah diproses atau dibatalkan.');
+            // Tambahkan item baru
+            foreach ($data['items'] as $itemData) {
+                PurchasesItems::create([
+                    'purchase_id' => $purchase->id,
+                    'product_id' => $itemData['product_id'],
+                    'qty_large' => $itemData['qty_large'] ?? 0,
+                    'qty_small' => $itemData['qty_small'] ?? 0,
+                    'selling_price_large' => $itemData['selling_price_large'] ?? 0,
+                    'selling_price_small' => $itemData['selling_price_small'] ?? 0,
+                    'qty_received_large' => $itemData['qty_received_large'] ?? 0,
+                    'qty_received_small' => $itemData['qty_received_small'] ?? 0,
+                    'purchase_price_large' => $itemData['purchase_price_large'] ?? 0,
+                    'purchase_price_small' => $itemData['purchase_price_small'] ?? 0,
+                    'subtotal' => ((int)($itemData['qty_large'] ?? 0) * (float)($itemData['purchase_price_large'] ?? 0)) +
+                        ((int)($itemData['qty_small'] ?? 0) * (float)($itemData['purchase_price_small'] ?? 0)),
+                    'item_notes' => $itemData['item_notes'] ?? null,
+                ]);
             }
-            $allStatusReceived = true;
-            foreach ($receivedData['items'] as $itemId => $itemData) {
-                $purchaseItem = $purchase->purchasesItems->where('id', $itemId)->first();
-                if (!$purchaseItem) {
-                    throw new \Exception("Item pembelian dengan ID {$itemId} tidak ditemukan.");
-                }
-                $tempQtyReceivedLarge = (float) ($itemData['qty_received_large'] ?? 0);
-                $tempQtyReceivedSmall = (float) ($itemData['qty_received_small'] ?? 0);
-
-                if ($tempQtyReceivedLarge < 0 || $tempQtyReceivedSmall < 0) {
-                    throw new \Exception("Jumlah diterima tidak boleh negatif untuk item ID {$itemId}.");
-                }
-                $remainingQtyLarge = $purchaseItem->qty_large - $purchaseItem->qty_received_large;
-                $remainingQtySmall = $purchaseItem->qty_small - $purchaseItem->qty_received_small;
-
-                if ($tempQtyReceivedLarge > $remainingQtyLarge || $tempQtyReceivedSmall > $remainingQtySmall) {
-                    throw new \Exception("Jumlah diterima melebihi jumlah yang dipesan untuk item ID {$itemId}.");
-                }
-
-                $purchaseItem->qty_received_large += $tempQtyReceivedLarge;
-                $purchaseItem->qty_received_small += $tempQtyReceivedSmall;
-                $purchaseItem->save();
-
-                if (
-                    $purchaseItem->qty_received_large < $purchaseItem->qty_large ||
-                    $purchaseItem->qty_received_small < $purchaseItem->qty_small
-                ) {
-                    $allStatusReceived = false;
-                }
-                if (!$allStatusReceived) {
-                    $purchase->status = 'partial';
-                } else {
-                    $purchase->status = 'completed';
-                }
-                $purchase->save();
-                $this->processStockIn($purchase);
-            }
-
             return $purchase;
         });
     }
@@ -235,8 +219,6 @@ class PurchasesRepository implements PurchasesInterfaces
 
             $purchase->status = 'cancelled';
             $purchase->save();
-
-
             return $purchase;
         });
     }
@@ -257,76 +239,6 @@ class PurchasesRepository implements PurchasesInterfaces
             return $purchase;
         });
     }
-
-
-    private function savePurchaseItemsOnly(Purchases $purchase, array $items)
-    {
-        foreach ($items as $index => $item) {
-            try {
-                if (!isset($item['product_id'])) {
-                    throw new \Exception("Product ID is missing for item {$index}");
-                }
-
-                $qtyLarge = (float) ($item['qty_large'] ?? 0);
-                $qtySmall = (float) ($item['qty_small'] ?? 0);
-                $purchasePriceLarge = (float) ($item['purchase_price_large'] ?? 0);
-                $purchasePriceSmall = (float) ($item['purchase_price_small'] ?? 0);
-                $sellingPriceLarge = (float) ($item['selling_price_large'] ?? 0);
-                $sellingPriceSmall = (float) ($item['selling_price_small'] ?? 0);
-                $expiryDate = $item['expiry_date'] ?? null;
-
-                $subtotal = ($qtyLarge * $purchasePriceLarge) + ($qtySmall * $purchasePriceSmall);
-
-                PurchasesItems::create([
-                    'purchase_id' => $purchase->id,
-                    'product_id' => $item['product_id'],
-                    'selling_price_small' => $sellingPriceSmall,
-                    'selling_price_large' => $sellingPriceLarge,
-                    'qty_large' => $qtyLarge,
-                    'qty_small' => $qtySmall,
-                    'purchase_price_small' => $purchasePriceSmall,
-                    'purchase_price_large' => $purchasePriceLarge,
-                    'expiry_date' => $expiryDate,
-                    'subtotal' => $subtotal,
-                ]);
-            } catch (\Exception $e) {
-                throw new \Exception("Gagal menyimpan item {$index}: " . $e->getMessage());
-            }
-        }
-    }
-
-    private function processStockIn(Purchases $purchase)
-    {
-        $purchase->load('purchasesItems');
-
-        foreach ($purchase->purchasesItems as $item) {
-
-            if ($item->qty_received_large > 0 || $item->qty_received_small > 0) {
-                $batchNumber = $this->generateBatchNumber();
-
-                $batch = Batches::create([
-                    'product_id' => $item->product_id,
-                    'batch_number' => $batchNumber,
-                    'purchase_price_large' => $item->purchase_price_large,
-                    'purchase_price_small' => $item->purchase_price_small,
-                    'quantity_large' => $item->qty_received_large,
-                    'quantity_small' => $item->qty_received_small,
-                    'selling_price_large' => $item->selling_price_large,
-                    'selling_price_small' => $item->selling_price_small,
-                    'expiry_date' => $item->expiry_date,
-                    'status' => 'active',
-                ]);
-
-                BatchLocations::create([
-                    'batch_id' => $batch->id,
-                    'location_id' => $purchase->location_id,
-                    'quantity_large' => $item->qty_received_large,
-                    'quantity_small' => $item->qty_received_small,
-                ]);
-            }
-        }
-    }
-
 
     public function generatePurchaseNumber()
     {

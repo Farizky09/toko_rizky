@@ -7,13 +7,6 @@
     </a>
 
     @if ($data->status == 'draft')
-        <a href="{{ route('purchases.receive-form', $data->id) }}"
-            class="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-green-100 text-green-700 hover:bg-green-200 transition-colors duration-200"
-            title="Terima Barang (GRN)">
-            <span class="mdi mdi-truck-check-outline text-sm"></span>
-            Terima
-        </a>
-
         <a href="{{ route('purchases.edit', $data->id) }}"
             class="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition-colors duration-200"
             title="Edit Pembelian">
@@ -31,7 +24,7 @@
         <form action="{{ route('purchases.cancel', $data->id) }}" method="POST" id="cancel-form-{{ $data->id }}"
             class="hidden">
             @csrf
-            @method('DELETE')
+            @method('PUT')
         </form>
     @endif
 

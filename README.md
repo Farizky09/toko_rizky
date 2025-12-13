@@ -31,9 +31,12 @@ Roadmap ini digunakan untuk mencatat progress selama pengembangan modul aplikasi
 Lanjutan Purchase Order dan Good Receipt
 
 -   [ ] Ubah konsep pembelian menjadi 2 tahap: Purchase Order (PO) dan Good Receipt (GR)
--   [ ] Modify tabel `purchase_orders`
+-   [ 12/12/25 ] Modify tabel `purchase_orders`
 -   [12/12/25 ] Buat tabel baru: `good_receipts`, `good_receipt_items`
 -   [13/12/25] Buat model 'GoodReceipt', `GoodReceiptItems'
+-   [13/12/25 ] Modify Repository in PurchaseOrder
+-   [13/12/25 ] Modify Controller in PurchaseOrder
+-   [13/12/25 ] Modify all in PurchaseOrder
 -   [ ] Membuat Repository dan interface Goodreceipt
 -   [ ] Membuat Controller untuk Goodreceipt
 -   [ ] Route untuk Goodreceipt

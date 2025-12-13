@@ -13,6 +13,5 @@ interface PurchasesInterfaces
     public function delete($id);
     public function generatePurchaseNumber();
     public function datatable();
-    public function receivePurchase($id, $receivedData);
     public function cancel($id);
 }
