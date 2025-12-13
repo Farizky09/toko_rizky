@@ -333,7 +333,7 @@
                 cancelButtonText: 'Tutup'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('destroy-form-' + id).submit();
+                    document.getElementById('cancel-form-' + id).submit();
                 }
             });
         }

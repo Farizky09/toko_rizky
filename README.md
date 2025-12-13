@@ -172,9 +172,12 @@ Lanjutan Purchase Order dan Good Receipt
 6. Landing Page → Checkout → Payment Gateway
 
 notes :
+
 12/12/25 dan 13/12/25
 
 -   sekarang konsep nya tidak one way lagi alias harus dipecah menjadi Purchase order (PO) dan Goodreceipt (GR)
 -   Purchase order hanya diperuntukkan untuk pemesanan saja, dan disini sudah ditetapkan terkait harga beli dan jual nya
 -   sehingga, Goodreceipt ini hanya dipergunakan untuk mengecek kedatangan barang dan exp nya saja
 -   qty received ada di po untuk apa? agar dia bisa akumulasi dari qty received tiap goodreceipt nya
+-   usahakan all formating ada di sisi fe karena Be fokus ke data aja jadi yang dikirim data mentah diolah oleh fe agar lebih bagus
+

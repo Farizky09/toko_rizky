@@ -14,6 +14,7 @@ class GoodReceiptItem extends Model
     protected $fillable = [
         'good_receipt_id',
         'product_id',
+        'batch_number',
         'purchase_items_id',
         'qty_received_large',
         'qty_received_small',
@@ -41,7 +42,7 @@ class GoodReceiptItem extends Model
      * Relasi ke Purchase Item (Detail PO)
      * PENTING: Foreign key didefinisikan sebagai 'purchase_items_id'
      * sesuai dengan kolom di database Anda.b
-     * 
+     *
      */
     public function purchaseItem()
     {
