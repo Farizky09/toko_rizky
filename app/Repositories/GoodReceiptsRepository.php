@@ -56,7 +56,7 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
                 if (!$goodReceipt) {
                     throw new \Exception('Good Receipt not found.');
                 }
-                if (in_array($goodReceipt->status, ['completed', 'partial'])) {
+                if (in_array($goodReceipt->status, ['completed', 'cancelled'])) {
                     throw new \Exception('Good Receipt sudah diproses dan tidak dapat diubah.');
                 }
 
@@ -87,7 +87,7 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
                 if (!$goodReceipt) {
                     throw new \Exception('Good Receipt not found.');
                 }
-                if (in_array($goodReceipt->status, ['completed', 'partial'])) {
+                if (in_array($goodReceipt->status, ['completed', 'cancelled'])) {
                     throw new \Exception('Good Receipt sudah diproses dan tidak dapat dihapus.');
                 }
                 // Hapus batch locations dan batches terkait
@@ -110,7 +110,24 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
             }
         });
     }
-
+    public function datatable()
+    {
+        return DB::table('good_receipts')
+            ->leftJoin('suppliers', 'good_receipts.supplier_id', '=', 'suppliers.id')
+            ->leftJoin('branches', 'good_receipts.branch_id', '=', 'branches.id')
+            ->leftJoin('purchases', 'good_receipts.purchase_id', '=', 'purchases.id')
+            ->leftJoin('locations', 'good_receipts.location_id', '=', 'locations.id')
+            ->leftJoin('users', 'good_receipts.received_by', '=', 'users.id')
+            ->select(
+                'good_receipts.*',
+                'suppliers.name as supplier_name',
+                'branches.name as branch_name',
+                'locations.name as location_name',
+                'purchases.purchase_number',
+                'users.name as received_by_name',
+            )
+            ->orderBy('good_receipts.created_at', 'desc');
+    }
     private function processPurchaseReceive($purchaseId, &$data)
     {
         $purchase = Purchases::with('purchasesItems')->findOrFail($purchaseId);
@@ -166,7 +183,7 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
         return $allReceived ? 'completed' : 'partial';
     }
 
-    private function generateGoodReceiptNumber()
+    public function generateGoodReceiptNumber()
     {
         $prefix = 'GR';
         $datePart = date('Ymd');
@@ -265,7 +282,7 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
             'branch_id' => $data['branch_id'],
             'location_id' => $data['location_id'],
             'received_by' => $data['received_by'],
-            'status' => 'completed', // 'partial' atau 'completed' berdasarkan purchase
+            'status' => 'completed',
             'total_items' => $data['total_items'],
             'total_quantity_large' => $data['total_quantity_large'],
             'total_quantity_small' => $data['total_quantity_small'],

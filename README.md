@@ -37,7 +37,7 @@ Lanjutan Purchase Order dan Good Receipt
 -   [13/12/25 ] Modify Repository in PurchaseOrder
 -   [13/12/25 ] Modify Controller in PurchaseOrder
 -   [13/12/25 ] Modify all in PurchaseOrder
--   [ ] Membuat Repository dan interface Goodreceipt
+-   [13/12/25 ] Membuat Repository dan interface Goodreceipt
 -   [ ] Membuat Controller untuk Goodreceipt
 -   [ ] Route untuk Goodreceipt
 -   [ ] View untuk Goodreceipt
@@ -180,4 +180,5 @@ notes :
 -   sehingga, Goodreceipt ini hanya dipergunakan untuk mengecek kedatangan barang dan exp nya saja
 -   qty received ada di po untuk apa? agar dia bisa akumulasi dari qty received tiap goodreceipt nya
 -   usahakan all formating ada di sisi fe karena Be fokus ke data aja jadi yang dikirim data mentah diolah oleh fe agar lebih bagus
+- 
 

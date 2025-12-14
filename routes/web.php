@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backend\BranchesController;
 use App\Http\Controllers\Backend\CategoriesController;
+use App\Http\Controllers\Backend\GoodReceiptsController;
 use App\Http\Controllers\Backend\LocationsController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\ProductsController;
@@ -129,6 +130,16 @@ Route::middleware('auth')->group(function () {
             Route::get('/show-receive-form/{id}', [PurchasesController::class, 'showReceiveForm'])->name('receive-form');
             Route::put('/process-receive/{id}', [PurchasesController::class, 'processReceive'])->middleware('permission:update_purchases')->name('receive-process');
             Route::put('/cancel/{id}', [PurchasesController::class, 'cancel'])->middleware('permission:update_purchases')->name('cancel');
+        });
+
+        Route::prefix('good-receipts')->name('good-receipts.')->group(function () {
+            Route::get('/', [GoodReceiptsController::class, 'index'])->middleware('permission:read_good_receipts')->name('index');
+            Route::get('/create', [GoodReceiptsController::class, 'create'])->middleware('permission:create_good_receipts')->name('create');
+            Route::post('/store', [GoodReceiptsController::class, 'store'])->middleware('permission:create_good_receipts')->name('store');
+            Route::get('/show/{id}', [GoodReceiptsController::class, 'show'])->middleware('permission:read_good_receipts')->name('show');
+            Route::get('/edit/{id}', [GoodReceiptsController::class, 'edit'])->middleware('permission:update_good_receipts')->name('edit');
+            Route::put('/update/{id}', [GoodReceiptsController::class, 'update'])->middleware('permission:update_good_receipts')->name('update');
+            Route::delete('/delete/{id}', [GoodReceiptsController::class, 'destroy'])->middleware('permission:delete_good_receipts')->name('delete');
         });
     });
     Route::prefix('owner')->name('owner.')->middleware(['role:owner|admin'])->group(function () {});

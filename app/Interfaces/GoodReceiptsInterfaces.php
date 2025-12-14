@@ -9,4 +9,6 @@ interface GoodReceiptsInterfaces
     public function store($data);
     public function update($id, $data);
     public function delete($id);
+    public function datatable();
+    public function generateGoodReceiptNumber();
 }

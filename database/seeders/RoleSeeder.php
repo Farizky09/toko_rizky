@@ -68,6 +68,10 @@ class RoleSeeder extends Seeder
             'create_purchases',
             'update_purchases',
             'delete_purchases',
+            'read_good_receipts',
+            'create_good_receipts',
+            'update_good_receipts',
+            'delete_good_receipts',
         ];
 
 

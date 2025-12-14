@@ -127,6 +127,12 @@
             <span class="mdi mdi-cart-arrow-down text-xl"></span>
             Pembelian
         </a>
+        <a href="{{ route('good-receipts.index') }}"
+            class="flex items-center gap-3 rounded-lg px-4 py-3 font-medium transition-colors
+                {{ request()->routeIs('good-receipts.*') ? 'bg-green-50 text-green-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}">
+            <span class="mdi mdi-cart-arrow-down text-xl"></span>
+            Penerimaan Barang
+        </a>
 
         <!-- Manajemen Sistem Section -->
         @canany(['read_permission', 'read_role', 'read_user_management'])
