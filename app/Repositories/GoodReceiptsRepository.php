@@ -112,12 +112,31 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
     }
     public function datatable()
     {
+        $startDate = request('startDate');
+        $endDate = request('endDate');
+        $status = request('status');
         return DB::table('good_receipts')
             ->leftJoin('suppliers', 'good_receipts.supplier_id', '=', 'suppliers.id')
             ->leftJoin('branches', 'good_receipts.branch_id', '=', 'branches.id')
             ->leftJoin('purchases', 'good_receipts.purchase_id', '=', 'purchases.id')
             ->leftJoin('locations', 'good_receipts.location_id', '=', 'locations.id')
             ->leftJoin('users', 'good_receipts.received_by', '=', 'users.id')
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('good_receipts.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+            })
+            ->when($startDate && $startDate == $endDate, function ($query) use ($startDate) {
+                $query->whereDate('good_receipts.created_at', $startDate);
+            })
+            ->when($startDate && (!$endDate || $startDate != $endDate), function ($query) use ($startDate, $endDate) {
+                if (!$endDate) {
+                    $query->where('good_receipts.created_at', '>=', $startDate . ' 00:00:00');
+                }
+            })
+            ->when($endDate && (!$startDate || $startDate != $endDate), function ($query) use ($endDate, $startDate) {
+                if (!$startDate) {
+                    $query->where('good_receipts.created_at', '<=', $endDate . ' 23:59:59');
+                }
+            })
             ->select(
                 'good_receipts.gr_number as gr_number',
                 'good_receipts.receipt_date as receipt_date',
@@ -127,6 +146,7 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
                 'locations.name as location_name',
                 'users.name as received_by_name',
             )
+
             ->orderBy('good_receipts.created_at', 'desc');
     }
     private function processPurchaseReceive($purchaseId, &$data)

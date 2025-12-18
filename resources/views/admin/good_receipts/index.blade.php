@@ -411,41 +411,6 @@
                         name: 'action',
                         orderable: false,
                         searchable: false,
-                        render: function(data, type, row) {
-                            let actions = '';
-
-                            // View Button
-                            actions += `<a href="${row.show_url}" class="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-xs font-medium text-blue-700 hover:bg-blue-100">
-                                <span class="mdi mdi-eye-outline"></span>
-                                Lihat
-                            </a>`;
-
-                            // Edit Button (only for draft status)
-                            if (row.status === 'draft') {
-                                actions += `<a href="${row.edit_url}" class="inline-flex items-center gap-1 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700 hover:bg-amber-100 ml-2">
-                                    <span class="mdi mdi-pencil-outline"></span>
-                                    Edit
-                                </a>`;
-                            }
-
-                            // Verify Button (for received status)
-                            if (row.status === 'received') {
-                                actions += `<button onclick="verifyReceipt(${row.id}, '${row.gr_number}')" class="inline-flex items-center gap-1 rounded-lg bg-green-50 px-3 py-2 text-xs font-medium text-green-700 hover:bg-green-100 ml-2">
-                                    <span class="mdi mdi-check-circle-outline"></span>
-                                    Verifikasi
-                                </button>`;
-                            }
-
-                            // Delete Button (only for draft/cancelled)
-                            if (row.status === 'draft' || row.status === 'cancelled') {
-                                actions += `<button onclick="confirmDelete(${row.id}, '${row.gr_number}')" class="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-100 ml-2">
-                                    <span class="mdi mdi-delete-outline"></span>
-                                    Hapus
-                                </button>`;
-                            }
-
-                            return `<div class="flex items-center justify-center">${actions}</div>`;
-                        }
                     }
                 ],
                 drawCallback: function(settings) {

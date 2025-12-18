@@ -187,3 +187,7 @@ notes :
 -   delete expiry in po
 -   add index goodreceipt form yak wkwkw
 -
+
+19/12/25
+
+-   ini pr (tolong diperbaiki logika status po dan penerimaan)
