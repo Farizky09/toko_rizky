@@ -119,11 +119,12 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
             ->leftJoin('locations', 'good_receipts.location_id', '=', 'locations.id')
             ->leftJoin('users', 'good_receipts.received_by', '=', 'users.id')
             ->select(
-                'good_receipts.*',
+                'good_receipts.gr_number as gr_number',
+                'good_receipts.receipt_date as receipt_date',
+                'purchases.purchase_number',
                 'suppliers.name as supplier_name',
                 'branches.name as branch_name',
                 'locations.name as location_name',
-                'purchases.purchase_number',
                 'users.name as received_by_name',
             )
             ->orderBy('good_receipts.created_at', 'desc');

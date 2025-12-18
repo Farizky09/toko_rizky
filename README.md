@@ -180,5 +180,10 @@ notes :
 -   sehingga, Goodreceipt ini hanya dipergunakan untuk mengecek kedatangan barang dan exp nya saja
 -   qty received ada di po untuk apa? agar dia bisa akumulasi dari qty received tiap goodreceipt nya
 -   usahakan all formating ada di sisi fe karena Be fokus ke data aja jadi yang dikirim data mentah diolah oleh fe agar lebih bagus
-- 
+-
 
+18/12/25
+
+-   delete expiry in po
+-   add index goodreceipt form yak wkwkw
+-

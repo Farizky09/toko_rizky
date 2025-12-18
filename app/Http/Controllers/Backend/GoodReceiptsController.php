@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GoodReceiptRquest;
+use App\Interfaces\GoodReceiptsInterfaces;
 use App\Models\Purchases;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,7 @@ class GoodReceiptsController extends Controller
 {
     private $goodReceiptsRepository;
 
-    public function __construct($goodReceiptsRepository)
+    public function __construct(GoodReceiptsInterfaces $goodReceiptsRepository)
     {
         $this->goodReceiptsRepository = $goodReceiptsRepository;
     }
@@ -22,28 +23,21 @@ class GoodReceiptsController extends Controller
         if ($request->ajax()) {
             $data = $this->goodReceiptsRepository->datatable();
             return datatables()->of($data)
-                ->addColumn('good_receipt_number', fn($data) => $data->good_receipt_number)
+                ->addColumn('gr_number', fn($data) => $data->gr_number)
+                ->addColumn('receipt_date', fn($data) => date('Y-m-d', strtotime($data->receipt_date)))
                 ->addColumn('purchase_number', fn($data) => $data->purchase_number ?? '-')
+                ->addColumn('supplier_name', fn($data) => $data->supplier_name ?? '-')
                 ->addColumn('branch_name', fn($data) => $data->branch_name ?? '-')
-                ->addColumn(
-                    'receipt_date',
-                    fn($data) =>
-                    date('Y-m-d', strtotime($data->receipt_date))
-                )
-                ->addColumn('total_items', fn($data) => $data->total_items ?? 0)
-                ->addColumn('total_quantity_large', fn($data) => $data->total_quantity_large ?? 0)
-                ->addColumn('total_quantity_small', fn($data) => $data->total_quantity_small ?? 0)
-                ->addColumn('total_quantitiy', fn($data) => ($data->total_quantity_large ?? 0) + ($data->total_quantity_small ?? 0))
-                ->addColumn('total_amount', fn($data) => (int) $data->total_amount)
-                ->addColumn('status', fn($data) => $data->status)
+                ->addColumn('location_name', fn($data) => $data->location_name ?? '-')
+                ->addColumn('received_by_name', fn($data) => $data->received_by_name ?? '-')
                 ->addColumn('action', function ($data) {
                     return view('admin.good_receipts.column.action', compact('data'));
                 })
-
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('admin.good_receipts.index');
+        $branches = DB::table('branches')->where('status', 'active')->get();
+        return view('admin.good_receipts.index', compact('branches'));
     }
 
     public function create()
@@ -116,5 +110,4 @@ class GoodReceiptsController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-    
 }

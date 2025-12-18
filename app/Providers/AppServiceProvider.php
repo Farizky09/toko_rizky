@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Interfaces\LocationsInterfaces::class, \App\Repositories\LocationsRepository::class);
         $this->app->bind(\App\Interfaces\ProductsInterfaces::class, \App\Repositories\ProductsRepository::class);
         $this->app->bind(\App\Interfaces\PurchasesInterfaces::class, \App\Repositories\PurchasesRepository::class);
+        $this->app->bind(\App\Interfaces\GoodReceiptsInterfaces::class, \App\Repositories\GoodReceiptsRepository::class);
     }
 
     /**

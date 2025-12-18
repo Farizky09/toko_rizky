@@ -237,8 +237,6 @@
                                         Besar</th>
                                     <th width="13%" class="py-3 px-4 font-semibold text-gray-700 text-end">Harga Jual
                                         Kecil</th>
-                                    <th width="10%" class="py-3 px-4 font-semibold text-gray-700 text-center">Tgl.
-                                        Kedaluwarsa</th>
                                     <th width="13%" class="py-3 px-4 font-semibold text-gray-700 text-end">Subtotal
                                     </th>
                                     <th width="5%" class="py-3 px-4 font-semibold text-gray-700 text-center">Aksi</th>
@@ -341,7 +339,7 @@
             initializeSelect2();
             initializeMoneyFormat();
 
-          
+
             $('#branch_id').on('change', function(e) {
                 updateLocationDropdown();
             });
@@ -557,7 +555,7 @@
             const priceSmallVal = itemData ? formatCurrencyDisplay(itemData.purchase_price_small) : '0';
             const sellingLargeVal = itemData ? formatCurrencyDisplay(itemData.selling_price_large) : '0';
             const sellingSmallVal = itemData ? formatCurrencyDisplay(itemData.selling_price_small) : '0';
-            const expiryDateVal = itemData ? itemData.expiry_date : '';
+
             const subtotalVal = (qtyLargeVal * (itemData ? itemData.purchase_price_large : 0)) + (qtySmallVal * (itemData ?
                 itemData.purchase_price_small : 0));
             row.innerHTML = `
@@ -566,13 +564,13 @@
                         <option value="">Pilih Produk</option>
                         ${products.map(product =>
                             `<option value="${product.id}"
-                                    ${itemData && product.id == itemData.product_id ? 'selected' : ''}
-                                    data-price-large="${product.purchase_price_large || 0}"
-                                    data-price-small="${product.purchase_price_small || 0}"
-                                    data-selling-large="${product.selling_price_large || 0}"
-                                    data-selling-small="${product.selling_price_small || 0}">
-                                    ${product.name} (${product.code})
-                                </option>`
+                                            ${itemData && product.id == itemData.product_id ? 'selected' : ''}
+                                            data-price-large="${product.purchase_price_large || 0}"
+                                            data-price-small="${product.purchase_price_small || 0}"
+                                            data-selling-large="${product.selling_price_large || 0}"
+                                            data-selling-small="${product.selling_price_small || 0}">
+                                            ${product.name} (${product.code})
+                                        </option>`
                         ).join('')}
                     </select>
                 </td>
@@ -621,11 +619,6 @@
                             class="form-control money-input selling-price-small text-end"
                             value="${sellingSmallVal}" oninput="formatCurrency(this)">
                     </div>
-                </td>
-                <td class="py-3 px-4">
-                    <input type="date" name="items[${itemIndex}][expiry_date]"
-                        class="form-control expiry-date border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        value="${expiryDateVal}">
                 </td>
                 <td class="py-3 px-4">
                     <div class="input-group">
