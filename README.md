@@ -191,3 +191,7 @@ notes :
 19/12/25
 
 -   ini pr (tolong diperbaiki logika status po dan penerimaan)
+
+27/12/25
+
+-   ada bug di fitur 'product' terutama filter untuk product harap pakai cara biasanya dan detail product masih belum jelas
