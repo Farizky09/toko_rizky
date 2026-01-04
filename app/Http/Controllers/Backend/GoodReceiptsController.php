@@ -69,7 +69,7 @@ class GoodReceiptsController extends Controller
     public function show($id)
     {
         try {
-            $goodReceipt = $this->goodReceiptsRepository->findById($id);
+            $goodReceipt = $this->goodReceiptsRepository->getById($id);
             return view('admin.good_receipts.show', compact('goodReceipt'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -79,7 +79,7 @@ class GoodReceiptsController extends Controller
     public function edit($id)
     {
         try {
-            $goodReceipt = $this->goodReceiptsRepository->findById($id);
+            $goodReceipt = $this->goodReceiptsRepository->getById($id);
             $branches = DB::table('branches')->where('status', 'active')->get();
             $suppliers = DB::table('suppliers')->where('status', 'active')->get();
             $locations = DB::table('locations')->get()->groupBy('branch_id');
@@ -98,6 +98,36 @@ class GoodReceiptsController extends Controller
             return redirect()->route('admin.good-receipts.index')->with('success', 'Good Receipt berhasil diperbarui.');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    public function process($id)
+    {
+        try {
+            $this->goodReceiptsRepository->process($id);
+            return redirect()->route('admin.good-receipts.index')->with('success', 'Good Receipt berhasil diproses.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    public function cancel($id)
+    {
+        try {
+            $this->goodReceiptsRepository->cancel($id);
+            return redirect()->route('admin.good-receipts.index')->with('success', 'Good Receipt berhasil dibatalkan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    public function complete($id)
+    {
+        try {
+            $this->goodReceiptsRepository->complete($id);
+            return redirect()->route('admin.good-receipts.index')->with('success', 'Good Receipt berhasil diselesaikan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 

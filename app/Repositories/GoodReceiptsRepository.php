@@ -35,12 +35,8 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
         return DB::transaction(function () use ($data) {
             try {
                 $this->validateStoreData($data);
-
-                // Proses receive purchase (wajib ada purchase_id)
-                $purchase = $this->processPurchaseReceive($data['purchase_id'], $data);
-
                 $goodReceipt = $this->createGoodReceipt($data);
-                $this->createGoodReceiptItem($goodReceipt->id, $data['items'], $data['location_id']);
+                $this->createGoodReceiptItem($goodReceipt->id, $data['items']);
                 return $goodReceipt;
             } catch (\Throwable $th) {
                 throw $th;
@@ -56,9 +52,10 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
                 if (!$goodReceipt) {
                     throw new \Exception('Good Receipt not found.');
                 }
-                if (in_array($goodReceipt->status, ['completed', 'cancelled'])) {
+                if (in_array($goodReceipt->status, ['process', 'completed', 'cancelled'])) {
                     throw new \Exception('Good Receipt sudah diproses dan tidak dapat diubah.');
                 }
+                GoodReceiptItem::where('good_receipt_id', $goodReceipt->id)->delete();
 
                 $goodReceipt->update([
                     'receipt_date' => $data['receipt_date'],
@@ -71,6 +68,8 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
                     'total_quantity_small' => $data['total_quantity_small'],
                     'notes' => $data['notes'] ?? null,
                 ]);
+
+                $this->createGoodReceiptItem($goodReceipt->id, $data['items']);
                 return $goodReceipt;
             } catch (\Throwable $th) {
                 throw $th;
@@ -87,24 +86,100 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
                 if (!$goodReceipt) {
                     throw new \Exception('Good Receipt not found.');
                 }
-                if (in_array($goodReceipt->status, ['completed', 'cancelled'])) {
+                if (in_array($goodReceipt->status, ['process', 'completed', 'cancelled'])) {
                     throw new \Exception('Good Receipt sudah diproses dan tidak dapat dihapus.');
                 }
-                // Hapus batch locations dan batches terkait
-                // $items = GoodReceiptItem::where('good_receipt_id', $goodReceipt->id)->get();
-                // foreach ($items as $item) {
-                //     if ($item->batch_number) {
-                //         $batch = Batches::where('batch_number', $item->batch_number)->first();
-                //         if ($batch) {
-                //             BatchLocations::where('batch_id', $batch->id)->delete();
-                //             $batch->delete();
-                //         }
-                //     }
-                // }
-                // Hapus item terkait
+
                 GoodReceiptItem::where('good_receipt_id', $goodReceipt->id)->delete();
-                // Hapus good receipt
                 $goodReceipt->delete();
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        });
+    }
+
+    public function process($id)
+    {
+        return DB::transaction(function () use ($id) {
+            try {
+                $goodReceipt = $this->goodReceipt->with('items')->find($id);
+                if (!$goodReceipt) {
+                    throw new \Exception('Good Receipt not found.');
+                }
+                if ($goodReceipt->status !== 'draft') {
+                    throw new \Exception('Good Receipt harus berstatus Draft untuk diproses.');
+                }
+
+                if ($goodReceipt->items->isEmpty()) {
+                    throw new \Exception('Good Receipt harus memiliki item untuk diproses.');
+                }
+
+                $goodReceipt->status = 'process';
+                $goodReceipt->save();
+                return $goodReceipt;
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        });
+    }
+
+    public function cancel($id)
+    {
+        return DB::transaction(function () use ($id) {
+            try {
+                $goodReceipt = $this->goodReceipt->find($id);
+                if (!$goodReceipt) {
+                    throw new \Exception('Good Receipt not found.');
+                }
+                if ($goodReceipt->status === 'cancelled') {
+                    throw new \Exception('Good Receipt sudah dibatalkan.');
+                }
+                if ($goodReceipt->status === 'completed') {
+                    throw new \Exception('Good Receipt sudah diterima.');
+                }
+
+                $goodReceipt->status = 'cancelled';
+                $goodReceipt->save();
+
+                return $goodReceipt;
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        });
+    }
+
+    public function complete($id)
+    {
+        return DB::transaction(function () use ($id) {
+            try {
+                $goodReceipt = $this->goodReceipt->with('items')->find($id);
+                if (!$goodReceipt) {
+                    throw new \Exception('Good Receipt not found.');
+                }
+                if ($goodReceipt->status !== 'process') {
+                    throw new \Exception('Good Receipt harus berstatus Process untuk diselesaikan.');
+                }
+
+
+                $this->processPurchaseReceive($goodReceipt);
+
+
+                foreach ($goodReceipt->items as $item) {
+                   
+                    if (!$item->batch_number) {
+                        $item->batch_number = $this->generateBatchNumber();
+                        $item->save();
+                    }
+
+                    if ($item->qty_received_large > 0 || $item->qty_received_small > 0) {
+                        $this->createBatch($item, $goodReceipt->location_id);
+                    }
+                }
+
+                $goodReceipt->status = 'completed';
+                $goodReceipt->save();
+
+                return $goodReceipt;
             } catch (\Throwable $th) {
                 throw $th;
             }
@@ -121,37 +196,42 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
             ->leftJoin('purchases', 'good_receipts.purchase_id', '=', 'purchases.id')
             ->leftJoin('locations', 'good_receipts.location_id', '=', 'locations.id')
             ->leftJoin('users', 'good_receipts.received_by', '=', 'users.id')
+            ->when($status, function ($query) use ($status) {
+                $query->where('good_receipts.status', $status);
+            })
             ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-                $query->whereBetween('good_receipts.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
-            })
-            ->when($startDate && $startDate == $endDate, function ($query) use ($startDate) {
-                $query->whereDate('good_receipts.created_at', $startDate);
-            })
-            ->when($startDate && (!$endDate || $startDate != $endDate), function ($query) use ($startDate, $endDate) {
-                if (!$endDate) {
-                    $query->where('good_receipts.created_at', '>=', $startDate . ' 00:00:00');
+                if ($startDate == $endDate) {
+                    $query->whereDate('good_receipts.created_at', $startDate);
+                } else {
+                    $query->whereBetween('good_receipts.created_at', [
+                        $startDate . ' 00:00:00',
+                        $endDate . ' 23:59:59'
+                    ]);
                 }
             })
-            ->when($endDate && (!$startDate || $startDate != $endDate), function ($query) use ($endDate, $startDate) {
-                if (!$startDate) {
-                    $query->where('good_receipts.created_at', '<=', $endDate . ' 23:59:59');
-                }
+            ->when($startDate && !$endDate, function ($query) use ($startDate) {
+                $query->where('good_receipts.created_at', '>=', $startDate . ' 00:00:00');
+            })
+            ->when($endDate && !$startDate, function ($query) use ($endDate) {
+                $query->where('good_receipts.created_at', '<=', $endDate . ' 23:59:59');
             })
             ->select(
+                'good_receipts.id',
                 'good_receipts.gr_number as gr_number',
                 'good_receipts.receipt_date as receipt_date',
+                'good_receipts.status',
                 'purchases.purchase_number',
                 'suppliers.name as supplier_name',
                 'branches.name as branch_name',
                 'locations.name as location_name',
                 'users.name as received_by_name',
+                'good_receipts.created_at'
             )
-
             ->orderBy('good_receipts.created_at', 'desc');
     }
-    private function processPurchaseReceive($purchaseId, &$data)
+    private function processPurchaseReceive($goodReceipt)
     {
-        $purchase = Purchases::with('purchasesItems')->findOrFail($purchaseId);
+        $purchase = Purchases::with('purchasesItems')->findOrFail($goodReceipt->purchase_id);
 
         // Validasi status purchase
         if (!in_array($purchase->status, ['draft', 'partial'])) {
@@ -159,7 +239,7 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
         }
 
         // Update qty_received pada purchase items (kumulatif)
-        $this->updatePurchaseItemsReceived($purchase, $data['items']);
+        $this->updatePurchaseItemsReceived($purchase, $goodReceipt->items);
 
         // Tentukan status purchase
         $purchase->status = $this->determinePurchaseStatus($purchase);
@@ -168,20 +248,20 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
         return $purchase;
     }
 
-    private function updatePurchaseItemsReceived(Purchases $purchase, array $receivedItems)
+    private function updatePurchaseItemsReceived(Purchases $purchase, $items)
     {
-        foreach ($receivedItems as $itemData) {
-            $itemId = $itemData['purchase_items_id'] ?? null;
+        foreach ($items  as $itemData) {
+            $itemId = $itemData->purchase_items_id ?? null;
             if (!$itemId) continue;
 
             $item = $purchase->purchasesItems->firstWhere('id', $itemId);
             if ($item) {
-                $deltaLarge = (float) ($itemData['qty_received_large'] ?? 0);
-                $deltaSmall = (float) ($itemData['qty_received_small'] ?? 0);
+                $deltaLarge = (float) ($itemData->qty_received_large ?? 0);
+                $deltaSmall = (float) ($itemData->qty_received_small ?? 0);
 
                 $item->qty_received_large = max(0, ($item->qty_received_large ?? 0) + $deltaLarge);
                 $item->qty_received_small = max(0, ($item->qty_received_small ?? 0) + $deltaSmall);
-                $item->item_notes = $itemData['note'] ?? $item->item_notes ?? null;
+                $item->item_notes = $itemData->note ?? $item->item_notes ?? null;
                 $item->save();
             }
         }
@@ -228,7 +308,6 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
             $lastBatch = Batches::whereDate('created_at', today())->latest()->first();
 
             if ($lastBatch) {
-                // Ambil 4 digit terakhir dari batch_number
                 $lastNumber = (int) substr($lastBatch->batch_number, -4);
                 $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
             } else {
@@ -303,7 +382,7 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
             'branch_id' => $data['branch_id'],
             'location_id' => $data['location_id'],
             'received_by' => $data['received_by'],
-            'status' => 'completed',
+            'status' => 'draft',
             'total_items' => $data['total_items'],
             'total_quantity_large' => $data['total_quantity_large'],
             'total_quantity_small' => $data['total_quantity_small'],
@@ -311,15 +390,15 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
         ]);
     }
 
-    private function createGoodReceiptItem($goodReceiptId, $itemData, $locationId)
+    private function createGoodReceiptItem($goodReceiptId, $itemData)
     {
         foreach ($itemData as $item) {
-            $batch_number = $this->generateBatchNumber();
 
-            $receipItems = GoodReceiptItem::create([
+
+            GoodReceiptItem::create([
                 'good_receipt_id' => $goodReceiptId,
                 'product_id' => $item['product_id'],
-                'batch_number' => $batch_number,
+                'batch_number' => null,
                 'purchase_items_id' => $item['purchase_items_id'] ?? null,
                 'qty_received_large' => $item['qty_received_large'],
                 'qty_received_small' => $item['qty_received_small'],
@@ -329,13 +408,11 @@ class GoodReceiptsRepository implements GoodReceiptsInterfaces
                 'expiry_date' => $item['expiry_date'] ?? null,
                 'note' => $item['note'] ?? null,
             ]);
-
-            $this->createBatch($receipItems, $item, $locationId);
         }
     }
 
 
-    private function createBatch($receipItems, $itemData, $locationId)
+    private function createBatch($receipItems,  $locationId)
     {
         $purchaseItem = $receipItems->purchase_items_id ? PurchasesItems::find($receipItems->purchase_items_id) : null;
 

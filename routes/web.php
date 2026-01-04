@@ -140,6 +140,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/edit/{id}', [GoodReceiptsController::class, 'edit'])->middleware('permission:update_good_receipts')->name('edit');
             Route::put('/update/{id}', [GoodReceiptsController::class, 'update'])->middleware('permission:update_good_receipts')->name('update');
             Route::delete('/delete/{id}', [GoodReceiptsController::class, 'destroy'])->middleware('permission:delete_good_receipts')->name('delete');
+            Route::put('/process/{id}', [GoodReceiptsController::class, 'process'])->middleware('permission:update_good_receipts')->name('process');
+            Route::put('/cancel/{id}', [GoodReceiptsController::class, 'cancel'])->middleware('permission:update_good_receipts')->name('cancel');
+            Route::put('/complete/{id}', [GoodReceiptsController::class, 'complete'])->middleware('permission:update_good_receipts')->name('complete');
         });
     });
     Route::prefix('owner')->name('owner.')->middleware(['role:owner|admin'])->group(function () {});

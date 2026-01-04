@@ -195,3 +195,9 @@ notes :
 27/12/25
 
 -   ada bug di fitur 'product' terutama filter untuk product harap pakai cara biasanya dan detail product masih belum jelas
+
+04/01/26
+
+-   memecah proses dari goodreceipt yang awal nya dia membuat penerimaan atau goodreceipt langsung menambahkan batch, sekarang dipecah menjadi beberapa tahapan seperti draft->process->completed atau canceled
+
+
