@@ -44,7 +44,7 @@ class GoodReceiptsController extends Controller
     {
 
         $purchases = Purchases::with(['supplier', 'branch', 'location', 'purchasesItems.product'])
-            ->where('status', ['draft', 'partial'])
+            ->whereIn('status', ['draft', 'partial'])
             ->get();
         $grNumber = $this->goodReceiptsRepository->generateGoodReceiptNumber();
         $branches = DB::table('branches')->where('status', 'active')->get();

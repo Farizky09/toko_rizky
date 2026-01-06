@@ -112,6 +112,15 @@ class PurchasesController extends Controller
         }
         return view('admin.purchases.detail', compact('purchase'));
     }
+    public function getItemsByPurchaseId($id)
+    {
+        try {
+            $items = $this->purchasesRepository->getById($id);
+            return response()->json(['success' => true, 'data' => $items]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
 
     public function edit($id)
     {

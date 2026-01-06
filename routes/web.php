@@ -130,6 +130,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/show-receive-form/{id}', [PurchasesController::class, 'showReceiveForm'])->name('receive-form');
             Route::put('/process-receive/{id}', [PurchasesController::class, 'processReceive'])->middleware('permission:update_purchases')->name('receive-process');
             Route::put('/cancel/{id}', [PurchasesController::class, 'cancel'])->middleware('permission:update_purchases')->name('cancel');
+            Route::get('/items/{id}', [PurchasesController::class, 'getItemsByPurchaseId'])->name('get-items');
         });
 
         Route::prefix('good-receipts')->name('good-receipts.')->group(function () {

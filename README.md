@@ -200,4 +200,9 @@ notes :
 
 -   memecah proses dari goodreceipt yang awal nya dia membuat penerimaan atau goodreceipt langsung menambahkan batch, sekarang dipecah menjadi beberapa tahapan seperti draft->process->completed atau canceled
 
+06/10/26
 
+-   melakukan perbaikan atau fixing pada button action di index milik goodreceipts
+-   add create form good receipt
+-   add function untuk return json data purchases item nya (perlu difix kan takut bug)
+-   perlu dicek lagi untuk purchases nya dan dicek juga from create gr nya

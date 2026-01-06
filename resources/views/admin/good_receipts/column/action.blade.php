@@ -50,12 +50,12 @@
 
     {{-- Status: COMPLETED --}}
     @if ($data->status == 'completed')
-        <a href="{{ route('good-receipts.print', $data->id) }}" target="_blank"
+        {{-- <a href="{{ route('good-receipts.print', $data->id) }}" target="_blank"
             class="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
             title="Cetak Good Receipt">
             <span class="mdi mdi-printer-outline text-sm"></span>
             Cetak
-        </a>
+        </a> --}}
     @endif
 
     {{-- Status: CANCELLED --}}
@@ -72,26 +72,34 @@
 {{-- Form tersembunyi untuk aksi-aksi --}}
 <div class="hidden">
     @if ($data->status == 'draft')
-        <form id="delete-form-{{ $data->id }}" action="{{ route('good-receipts.destroy', $data->id) }}" method="POST">
+        <form id="delete-form-{{ $data->id }}" action="{{ route('good-receipts.delete', $data->id) }}"
+            method="POST">
             @csrf
             @method('DELETE')
         </form>
-        <form id="process-form-{{ $data->id }}" action="{{ route('good-receipts.process', $data->id) }}" method="POST">
+        <form id="process-form-{{ $data->id }}" action="{{ route('good-receipts.process', $data->id) }}"
+            method="POST">
             @csrf
+            @method('PUT')
         </form>
     @endif
 
     @if ($data->status == 'process')
-        <form id="complete-form-{{ $data->id }}" action="{{ route('good-receipts.complete', $data->id) }}" method="POST">
+        <form id="complete-form-{{ $data->id }}" action="{{ route('good-receipts.complete', $data->id) }}"
+            method="POST">
             @csrf
+            @method('PUT')
         </form>
-        <form id="cancel-form-{{ $data->id }}" action="{{ route('good-receipts.cancel', $data->id) }}" method="POST">
+        <form id="cancel-form-{{ $data->id }}" action="{{ route('good-receipts.cancel', $data->id) }}"
+            method="POST">
             @csrf
+            @method('PUT')
         </form>
     @endif
 
     @if ($data->status == 'cancelled')
-        <form id="delete-form-{{ $data->id }}" action="{{ route('good-receipts.destroy', $data->id) }}" method="POST">
+        <form id="delete-form-{{ $data->id }}" action="{{ route('good-receipts.delete', $data->id) }}"
+            method="POST">
             @csrf
             @method('DELETE')
         </form>

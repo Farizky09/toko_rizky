@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Manajemen Penerimaan Barang')
+@section('title', 'Manajemen Good Receipt')
 
 @section('content')
     <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
@@ -14,15 +14,15 @@
                             <span class="mdi mdi-package-variant-closed text-xl text-green-600"></span>
                         </div>
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-900">Manajemen Penerimaan Barang</h1>
-                            <p class="text-gray-600 mt-1">Kelola semua transaksi penerimaan barang dari supplier</p>
+                            <h1 class="text-2xl font-bold text-gray-900">Manajemen Good Receipt</h1>
+                            <p class="text-gray-600 mt-1">Kelola semua transaksi penerimaan barang dari pembelian</p>
                         </div>
                     </div>
 
                     <!-- Quick Tips -->
                     <div class="flex items-center gap-2 text-sm text-gray-500">
                         <span class="mdi mdi-lightbulb-on-outline text-amber-500"></span>
-                        <span>Good Receipt adalah dokumen penerimaan barang dari pembelian ke gudang</span>
+                        <span>Good Receipt adalah dokumen penerimaan barang dari Purchase Order ke gudang</span>
                     </div>
                 </div>
 
@@ -32,18 +32,9 @@
                         <a href="{{ route('good-receipts.create') }}"
                             class="inline-flex items-center gap-2 rounded-xl bg-green-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-green-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                             <span class="mdi mdi-plus-circle-outline text-lg"></span>
-                            Tambah Penerimaan
+                            Tambah Good Receipt
                         </a>
                     @endcanany
-
-                    <!-- Import/Export Buttons -->
-                    <div class="flex items-center gap-2">
-                        <button type="button"
-                            class="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-200 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                            <span class="mdi mdi-download text-lg"></span>
-                            Export
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -59,53 +50,53 @@
                         </div>
                     </div>
                     <div class="ml-4 flex-1">
-                        <p class="text-sm font-medium text-gray-600">Total Penerimaan</p>
+                        <p class="text-sm font-medium text-gray-600">Total Good Receipt</p>
                         <p class="text-2xl font-semibold text-gray-900" id="totalReceipts">0</p>
                     </div>
                 </div>
             </div>
 
-            <!-- This Month Card -->
+            <!-- Draft Card -->
             <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50">
-                            <span class="mdi mdi-calendar-month text-xl text-blue-600"></span>
+                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-50">
+                            <span class="mdi mdi-file-document-outline text-xl text-gray-600"></span>
                         </div>
                     </div>
                     <div class="ml-4 flex-1">
-                        <p class="text-sm font-medium text-gray-600">Bulan Ini</p>
-                        <p class="text-2xl font-semibold text-gray-900" id="monthlyReceipts">0</p>
+                        <p class="text-sm font-medium text-gray-600">Draft</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="draftReceipts">0</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Pending Verification Card -->
+            <!-- Process Card -->
             <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-50">
-                            <span class="mdi mdi-clock-outline text-xl text-amber-600"></span>
+                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-50">
+                            <span class="mdi mdi-clock-outline text-xl text-yellow-600"></span>
                         </div>
                     </div>
                     <div class="ml-4 flex-1">
-                        <p class="text-sm font-medium text-gray-600">Menunggu Verifikasi</p>
-                        <p class="text-2xl font-semibold text-gray-900" id="pendingReceipts">0</p>
+                        <p class="text-sm font-medium text-gray-600">Process</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="processReceipts">0</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Activity Card -->
+            <!-- Completed Card -->
             <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-50">
-                            <span class="mdi mdi-update text-xl text-purple-600"></span>
+                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-50">
+                            <span class="mdi mdi-check-circle-outline text-xl text-green-600"></span>
                         </div>
                     </div>
                     <div class="ml-4 flex-1">
-                        <p class="text-sm font-medium text-gray-600">Terakhir Diperbarui</p>
-                        <p class="text-lg font-semibold text-gray-900" id="lastUpdated">-</p>
+                        <p class="text-sm font-medium text-gray-600">Completed</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="completedReceipts">0</p>
                     </div>
                 </div>
             </div>
@@ -116,7 +107,7 @@
             <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900">Filter Pencarian</h3>
-                    <p class="text-sm text-gray-600">Saring data penerimaan barang sesuai kebutuhan</p>
+                    <p class="text-sm text-gray-600">Saring data good receipt sesuai kebutuhan</p>
                 </div>
 
                 <div class="flex flex-wrap gap-3">
@@ -136,25 +127,12 @@
                     <div class="w-full sm:w-auto">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                         <select id="statusFilter"
-                            class="rounded-lg border-gray-300 text-sm focus:border-green-500 focus:ring-green-500">
+                            class="rounded-lg border-gray-300 text-sm focus:border-green-500 focus:ring-green-500 w-40">
                             <option value="">Semua Status</option>
                             <option value="draft">Draft</option>
-                            <option value="received">Diterima</option>
-                            <option value="verified">Terverifikasi</option>
-                            <option value="partially_received">Parsial</option>
-                            <option value="cancelled">Dibatalkan</option>
-                        </select>
-                    </div>
-
-                    <!-- Branch Filter -->
-                    <div class="w-full sm:w-auto">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Cabang</label>
-                        <select id="branchFilter"
-                            class="rounded-lg border-gray-300 text-sm focus:border-green-500 focus:ring-green-500">
-                            <option value="">Semua Cabang</option>
-                            @foreach ($branches as $branch)
-                                <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                            @endforeach
+                            <option value="process">Process</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
                         </select>
                     </div>
 
@@ -181,8 +159,8 @@
                     <div class="flex items-center gap-3">
                         <span class="mdi mdi-table text-green-600 text-xl"></span>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900">Daftar Penerimaan Barang</h3>
-                            <p class="text-sm text-gray-600">Semua transaksi penerimaan barang yang terdaftar</p>
+                            <h3 class="text-lg font-semibold text-gray-900">Daftar Good Receipt</h3>
+                            <p class="text-sm text-gray-600">Semua transaksi good receipt yang terdaftar</p>
                         </div>
                     </div>
 
@@ -201,10 +179,10 @@
                     <table id="goodReceiptsTable" class="table dt-responsive nowrap m-1" style="width:100%">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>No. GR</th>
-                                <th>Tanggal Terima</th>
-                                <th>No. Pembelian</th>
+                                <th>No</th>
+                                <th>GR Number</th>
+                                <th>Tanggal</th>
+                                <th>Purchase Number</th>
                                 <th>Supplier</th>
                                 <th>Cabang</th>
                                 <th>Lokasi</th>
@@ -225,10 +203,13 @@
             <div class="flex items-start gap-3">
                 <span class="mdi mdi-help-circle-outline text-blue-500 text-xl mt-0.5"></span>
                 <div class="flex-1">
-                    <h4 class="font-semibold text-blue-900">Butuh Bantuan?</h4>
+                    <h4 class="font-semibold text-blue-900">Flow Good Receipt</h4>
                     <p class="text-sm text-blue-700 mt-1">
-                        Good Receipt (GR) adalah dokumen resmi yang mencatat penerimaan barang dari supplier ke gudang.
-                        Pastikan data GR sesuai dengan fisik barang yang diterima sebelum melakukan verifikasi.
+                        <strong>Draft</strong> → <strong>Process</strong> → <strong>Completed</strong><br>
+                        • <strong>Draft</strong>: GR baru dibuat, bisa diedit/dihapus<br>
+                        • <strong>Process</strong>: GR sedang diproses, bisa diselesaikan/dibatalkan<br>
+                        • <strong>Completed</strong>: GR selesai, stok sudah ditambahkan ke inventory<br>
+                        • <strong>Cancelled</strong>: GR dibatalkan
                     </p>
                 </div>
             </div>
@@ -239,11 +220,22 @@
 @push('scripts')
     <script>
         @if (session('success'))
-            Alert.success("{{ session('success') }}");
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 3000
+            });
         @endif
 
         @if (session('error'))
-            Alert.error("{{ session('error') }}");
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: '{{ session('error') }}',
+                showConfirmButton: true,
+            });
         @endif
 
         let dataTable;
@@ -260,21 +252,21 @@
                         d.start_date = $('#startDate').val();
                         d.end_date = $('#endDate').val();
                         d.status = $('#statusFilter').val();
-                        d.branch_id = $('#branchFilter').val();
                     }
                 },
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        className: 'text-center'
                     },
                     {
                         data: 'gr_number',
                         name: 'gr_number',
                         render: function(data, type, row) {
                             return `<div class="flex items-center">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <span class="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-green-100 text-green-800">
                                     ${data}
                                 </span>
                             </div>`;
@@ -286,78 +278,62 @@
                         render: function(data) {
                             if (!data) return '-';
                             const date = new Date(data);
-                            const formattedDate = date.toLocaleDateString('id-ID', {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric'
-                            });
                             return `<div class="text-center">
-                                <div class="font-medium text-gray-900">${formattedDate}</div>
-                                <div class="text-xs text-gray-500">tanggal terima</div>
+                                <div class="font-medium text-gray-900">${date.toLocaleDateString('id-ID')}</div>
                             </div>`;
                         }
                     },
                     {
                         data: 'purchase_number',
-                        name: 'purchase.purchase_number',
+                        name: 'purchase_number',
                         render: function(data, type, row) {
                             return `<div class="flex items-center">
-                                <span class="mdi mdi-file-document-outline mr-3 text-lg text-blue-600"></span>
                                 <div>
                                     <div class="font-medium text-gray-900">${data || '-'}</div>
-                                    <div class="text-xs text-gray-500">No. PO</div>
                                 </div>
                             </div>`;
                         }
                     },
                     {
                         data: 'supplier_name',
-                        name: 'purchase.supplier.name',
+                        name: 'supplier_name',
                         render: function(data, type, row) {
                             return `<div class="flex items-center">
-                                <span class="mdi mdi-truck mr-3 text-lg text-gray-600"></span>
                                 <div>
                                     <div class="font-medium text-gray-900">${data || '-'}</div>
-                                    <div class="text-xs text-gray-500">Supplier</div>
                                 </div>
                             </div>`;
                         }
                     },
                     {
                         data: 'branch_name',
-                        name: 'branch.name',
+                        name: 'branch_name',
                         render: function(data, type, row) {
                             return `<div class="flex items-center">
-                                <span class="mdi mdi-store mr-3 text-lg text-purple-600"></span>
                                 <div>
                                     <div class="font-medium text-gray-900">${data || '-'}</div>
-                                    <div class="text-xs text-gray-500">Cabang</div>
                                 </div>
                             </div>`;
                         }
                     },
                     {
                         data: 'location_name',
-                        name: 'location.name',
+                        name: 'location_name',
                         render: function(data, type, row) {
                             return `<div class="flex items-center">
-                                <span class="mdi mdi-map-marker mr-3 text-lg text-red-600"></span>
                                 <div>
                                     <div class="font-medium text-gray-900">${data || '-'}</div>
-                                    <div class="text-xs text-gray-500">Lokasi</div>
                                 </div>
                             </div>`;
                         }
                     },
                     {
                         data: 'received_by_name',
-                        name: 'receivedBy.name',
+                        name: 'received_by_name',
                         render: function(data, type, row) {
                             return `<div class="flex items-center">
-                                <span class="mdi mdi-account-circle mr-3 text-lg text-amber-600"></span>
                                 <div>
                                     <div class="font-medium text-gray-900">${data || '-'}</div>
-                                    <div class="text-xs text-gray-500">Penerima</div>
                                 </div>
                             </div>`;
                         }
@@ -372,34 +348,29 @@
 
                             switch (data) {
                                 case 'draft':
-                                    badgeClass = 'bg-amber-100 text-amber-800';
+                                    badgeClass = 'bg-gray-100 text-gray-800';
                                     statusText = 'Draft';
-                                    icon = 'mdi-pencil';
+                                    icon = 'mdi-file-document-outline';
                                     break;
-                                case 'received':
-                                    badgeClass = 'bg-blue-100 text-blue-800';
-                                    statusText = 'Diterima';
-                                    icon = 'mdi-package-variant';
+                                case 'process':
+                                    badgeClass = 'bg-yellow-100 text-yellow-800';
+                                    statusText = 'Process';
+                                    icon = 'mdi-clock-outline';
                                     break;
-                                case 'verified':
+                                case 'completed':
                                     badgeClass = 'bg-green-100 text-green-800';
-                                    statusText = 'Terverifikasi';
-                                    icon = 'mdi-check-circle';
-                                    break;
-                                case 'partially_received':
-                                    badgeClass = 'bg-purple-100 text-purple-800';
-                                    statusText = 'Parsial';
-                                    icon = 'mdi-package-variant-closed';
+                                    statusText = 'Completed';
+                                    icon = 'mdi-check-circle-outline';
                                     break;
                                 case 'cancelled':
                                     badgeClass = 'bg-red-100 text-red-800';
-                                    statusText = 'Dibatalkan';
-                                    icon = 'mdi-close-circle';
+                                    statusText = 'Cancelled';
+                                    icon = 'mdi-close-circle-outline';
                                     break;
                             }
 
                             return `<div class="text-center">
-                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${badgeClass}">
+                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs font-medium ${badgeClass}">
                                     <span class="mdi ${icon}"></span>
                                     ${statusText}
                                 </span>
@@ -411,6 +382,7 @@
                         name: 'action',
                         orderable: false,
                         searchable: false,
+                        className: 'text-center'
                     }
                 ],
                 drawCallback: function(settings) {
@@ -431,71 +403,19 @@
             $('#startDate').val('');
             $('#endDate').val('');
             $('#statusFilter').val('');
-            $('#branchFilter').val('');
             dataTable.ajax.reload();
             updateStats();
         }
 
-        function verifyReceipt(id, grNumber) {
-            if (typeof Swal === 'undefined') {
-                return alert('SweetAlert not loaded');
-            }
-
-            Swal.fire({
-                title: `Verifikasi Penerimaan "${grNumber}"?`,
-                text: "Konfirmasi bahwa barang sudah sesuai dan lengkap. Proses ini tidak dapat dibatalkan.",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#10b981',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Ya, Verifikasi',
-                cancelButtonText: 'Batal',
-                showLoaderOnConfirm: true,
-                preConfirm: () => {
-                    return fetch(`/good-receipts/${id}/verify`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            }
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(response.statusText);
-                            }
-                            return response.json();
-                        })
-                        .catch(error => {
-                            Swal.showValidationMessage(`Request failed: ${error}`);
-                        });
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        'Berhasil!',
-                        'Penerimaan barang berhasil diverifikasi.',
-                        'success'
-                    ).then(() => {
-                        dataTable.ajax.reload();
-                    });
-                }
-            });
-        }
-
         function confirmDelete(id, grNumber) {
-            if (typeof Swal === 'undefined') {
-                return alert('SweetAlert not loaded');
-            }
-
             Swal.fire({
-                title: `Hapus Penerimaan "${grNumber}"?`,
-                text: "Data penerimaan barang akan dihapus permanen. Tindakan ini tidak dapat dibatalkan!",
+                title: `Hapus Good Receipt?`,
+                text: `Apakah Anda yakin ingin menghapus Good Receipt ${grNumber}?`,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Ya, Hapus',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -504,39 +424,103 @@
             });
         }
 
+        function confirmProcess(id, grNumber) {
+            Swal.fire({
+                title: 'Proses Good Receipt?',
+                text: `Apakah Anda yakin ingin memproses Good Receipt ${grNumber}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Proses!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`process-form-${id}`).submit();
+                }
+            });
+        }
+
+        function confirmComplete(id, grNumber) {
+            Swal.fire({
+                title: 'Selesaikan Good Receipt?',
+                text: `Apakah Anda yakin ingin menyelesaikan Good Receipt ${grNumber}? Stok akan ditambahkan ke inventory.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Selesaikan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`complete-form-${id}`).submit();
+                }
+            });
+        }
+
+        function confirmCancel(id, grNumber) {
+            Swal.fire({
+                title: 'Batalkan Good Receipt?',
+                text: `Apakah Anda yakin ingin membatalkan Good Receipt ${grNumber}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#6c757d',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Batalkan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`cancel-form-${id}`).submit();
+                }
+            });
+        }
+
         function updateStats() {
-            const table = dataTable;
-            const totalRecords = table.page.info().recordsTotal;
+            // This function would ideally fetch stats via AJAX
+            // For now, we'll count from the current table data
+            let draftCount = 0;
+            let processCount = 0;
+            let completedCount = 0;
+            let totalCount = 0;
 
-            // Get current month
-            const now = new Date();
-            const currentMonth = now.getMonth() + 1;
-            const currentYear = now.getFullYear();
+            // Get all rows in the current view
+            dataTable.rows({
+                search: 'applied'
+            }).every(function() {
+                const row = this.data();
+                const status = row.status;
 
-            // You might want to fetch these stats via AJAX for accuracy
-            // For now, we'll just show basic stats
+                totalCount++;
 
-            $('#totalReceipts').text(totalRecords.toLocaleString('id-ID'));
-            $('#monthlyReceipts').text('0'); // Would need AJAX call to get actual count
-            $('#pendingReceipts').text('0'); // Would need AJAX call to get actual count
+                switch (status) {
+                    case 'draft':
+                        draftCount++;
+                        break;
+                    case 'process':
+                        processCount++;
+                        break;
+                    case 'completed':
+                        completedCount++;
+                        break;
+                }
+            });
 
-            $('#lastUpdated').text(now.toLocaleTimeString('id-ID', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            }));
+            $('#totalReceipts').text(totalCount);
+            $('#draftReceipts').text(draftCount);
+            $('#processReceipts').text(processCount);
+            $('#completedReceipts').text(completedCount);
         }
 
         function refreshData() {
             dataTable.ajax.reload(null, false);
+            updateStats();
 
-            setTimeout(updateStats, 500);
-
-            if (typeof Alert !== 'undefined') {
-                Alert.info('Data berhasil diperbarui');
-            } else {
-                alert('Data berhasil diperbarui');
-            }
+            Swal.fire({
+                icon: 'success',
+                title: 'Data berhasil diperbarui',
+                showConfirmButton: false,
+                timer: 1500
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
