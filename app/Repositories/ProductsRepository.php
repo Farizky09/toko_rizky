@@ -23,7 +23,7 @@ class ProductsRepository implements ProductsInterfaces
 
     public function getById($id)
     {
-        return $this->products->find($id);
+        return $this->products->with(['category', 'unitLarge', 'unitSmall'])->find($id);
     }
 
 
@@ -62,6 +62,11 @@ class ProductsRepository implements ProductsInterfaces
     public function datatable()
     {
         $locationId = request('location_id');
+        $smallUnitId = request('unit_small_id');
+        $largeUnitId = request('unit_large_id');
+        $categoryId = request('category_id');
+        $status = request('status');
+
         return DB::table('products')
             ->join('categories', 'categories.id', '=', 'products.category_id')
             ->join('unit_larges', 'unit_larges.id', '=', 'products.unit_large_id')
@@ -90,17 +95,17 @@ class ProductsRepository implements ProductsInterfaces
 
                 DB::raw('COALESCE(SUM(CASE WHEN ' . ($locationId ? "locations.id = {$locationId}" : '1=1') . ' THEN (batch_locations.quantity_large * products.conversion + batch_locations.quantity_small) ELSE 0 END), 0) as total_stock_small')
             )
-            ->when(request('category_id'), function ($query) {
-                return $query->where('products.category_id', request('category_id'));
+            ->when($categoryId, function ($query) use ($categoryId) {
+                return $query->where('products.category_id', $categoryId);
             })
-            ->when(request('status'), function ($query) {
-                return $query->where('products.status', request('status'));
+            ->when($status, function ($query) use ($status) {
+                return $query->where('products.status', $status);
             })
-            ->when(request('unit_small_id'), function ($query) {
-                return $query->where('products.unit_small_id', request('unit_small_id'));
+            ->when($smallUnitId, function ($query) use ($smallUnitId) {
+                return $query->where('products.unit_small_id', $smallUnitId);
             })
-            ->when(request('unit_large_id'), function ($query) {
-                return $query->where('products.unit_large_id', request('unit_large_id'));
+            ->when($largeUnitId, function ($query) use ($largeUnitId) {
+                return $query->where('products.unit_large_id', $largeUnitId);
             })
             ->groupBy(
                 'products.id',

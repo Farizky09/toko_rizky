@@ -230,78 +230,84 @@
     </main>
 
     <!-- Modal Detail Produk -->
-    <div id="productDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Background overlay -->
-            <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
-
-            <!-- Modal panel -->
-            <div
-                class="relative inline-block w-full max-w-2xl px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
+    <div id="productDetailModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content rounded-xl shadow-xl">
                 <!-- Header -->
-                <div class="flex items-center justify-between pb-4 border-b">
-                    <h3 class="text-lg font-semibold text-gray-900">Detail Produk</h3>
-                    <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
-                        <span class="mdi mdi-close text-xl"></span>
+                <div class="modal-header border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+                    <h5 class="modal-title font-semibold text-gray-900 flex items-center gap-2">
+                        <span class="mdi mdi-information-outline text-blue-600 text-xl"></span>
+                        Detail Produk
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-gray-400 hover:text-gray-600">&times;</span>
                     </button>
                 </div>
 
                 <!-- Body -->
-                <div class="mt-4 space-y-4">
-                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div class="space-y-3">
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Kode Produk</label>
-                                <p class="mt-1 text-sm text-gray-900" id="detailCode">-</p>
+                <div class="modal-body p-6">
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div class="space-y-3">
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Kode
+                                        Produk</label>
+                                    <p class="mt-1 text-sm font-semibold text-gray-900" id="detailCode">-</p>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Nama
+                                        Produk</label>
+                                    <p class="mt-1 text-sm font-semibold text-gray-900" id="detailName">-</p>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <label
+                                        class="text-xs font-medium text-gray-500 uppercase tracking-wide">Kategori</label>
+                                    <p class="mt-1 text-sm font-semibold text-gray-900" id="detailCategory">-</p>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Satuan
+                                        Besar</label>
+                                    <p class="mt-1 text-sm font-semibold text-gray-900" id="detailUnitLarge">-</p>
+                                </div>
                             </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Nama Produk</label>
-                                <p class="mt-1 text-sm text-gray-900" id="detailName">-</p>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Kategori</label>
-                                <p class="mt-1 text-sm text-gray-900" id="detailCategory">-</p>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Satuan Besar</label>
-                                <p class="mt-1 text-sm text-gray-900" id="detailUnitLarge">-</p>
+                            <div class="space-y-3">
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Satuan
+                                        Kecil</label>
+                                    <p class="mt-1 text-sm font-semibold text-gray-900" id="detailUnitSmall">-</p>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <label
+                                        class="text-xs font-medium text-gray-500 uppercase tracking-wide">Konversi</label>
+                                    <p class="mt-1 text-sm font-semibold text-gray-900" id="detailConversion">-</p>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Stok
+                                        Minimal</label>
+                                    <p class="mt-1 text-sm font-semibold text-gray-900" id="detailMinStock">-</p>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Status</label>
+                                    <p class="mt-1">
+                                        <span id="detailStatus"
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            -
+                                        </span>
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Satuan Kecil</label>
-                                <p class="mt-1 text-sm text-gray-900" id="detailUnitSmall">-</p>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Konversi</label>
-                                <p class="mt-1 text-sm text-gray-900" id="detailConversion">-</p>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Stok Minimal</label>
-                                <p class="mt-1 text-sm text-gray-900" id="detailMinStock">-</p>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Status</label>
-                                <p class="mt-1">
-                                    <span id="detailStatus"
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                        -
-                                    </span>
-                                </p>
-                            </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Deskripsi</label>
+                            <p class="mt-1 text-sm text-gray-900" id="detailDescription">-</p>
                         </div>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Deskripsi</label>
-                        <p class="mt-1 text-sm text-gray-900" id="detailDescription">-</p>
                     </div>
                 </div>
 
                 <!-- Footer -->
-                <div class="mt-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" onclick="closeModal()"
-                        class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto">
-                        Tutup
+                <div class="modal-footer border-t bg-gray-50">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <span class="mdi mdi-close"></span> Tutup
                     </button>
                 </div>
             </div>
@@ -320,14 +326,9 @@
             Alert.success("{{ session('success') }}");
         @endif
 
-        let productDetailModal = null;
-
         $(document).ready(function() {
             // Initialize Select2
             $('select').select2();
-
-            // Initialize modal
-            productDetailModal = new bootstrap.Modal(document.getElementById('productDetailModal'));
 
             const table = $('#adminTable').DataTable({
                 responsive: true,
@@ -442,18 +443,7 @@
                         data: 'action',
                         name: 'action',
                         orderable: false,
-                        searchable: false,
-                        render: function(data, type, row) {
-                            return `
-                                <div class="flex items-center gap-2">
-                                    <button class="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-blue-700 transition-all duration-200 hover:bg-blue-100 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 detail-btn" data-id="${row.id}">
-                                        <span class="mdi mdi-information-outline text-base"></span>
-                                        Detail
-                                    </button>
-                                    ${data}
-                                </div>
-                            `;
-                        }
+                        searchable: false
                     }
                 ],
                 drawCallback: function(settings) {
@@ -467,8 +457,8 @@
                     table.ajax.reload();
                 });
 
-            // Detail button click event
-            $('#adminTable tbody').on('click', '.detail-btn', function() {
+            // Detail Modal button click event
+            $('#adminTable tbody').on('click', '.detail-modal-btn', function() {
                 var productId = $(this).data('id');
                 showProductDetail(productId);
             });
@@ -485,6 +475,9 @@
             $('#detailMinStock').text('Loading...');
             $('#detailStatus').text('Loading...');
             $('#detailDescription').text('Loading...');
+
+            // Show modal
+            $('#productDetailModal').modal('show');
 
             $.ajax({
                 url: '{{ route('products.show', ':id') }}'.replace(':id', productId),
@@ -508,42 +501,27 @@
                         statusElement.removeClass(
                             'bg-gray-100 text-gray-800 bg-green-100 text-green-800 bg-red-100 text-red-800');
                         if (data.status === 'active') {
-                            statusElement.addClass('bg-green-100 text-green-800').text('Aktif');
+                            statusElement.addClass('bg-green-100 text-green-800').html(
+                                '<span class="mdi mdi-check-circle text-green-500 mr-1"></span>Aktif'
+                            );
                         } else {
-                            statusElement.addClass('bg-red-100 text-red-800').text('Nonaktif');
+                            statusElement.addClass('bg-red-100 text-red-800').html(
+                                '<span class="mdi mdi-close-circle text-red-500 mr-1"></span>Nonaktif'
+                            );
                         }
 
                         $('#detailDescription').text(data.description || 'Tidak ada deskripsi');
-
-                        // Show modal
-                        productDetailModal.show();
                     } else {
                         Alert.error(response.message || 'Gagal memuat detail produk.');
+                        $('#productDetailModal').modal('hide');
                     }
                 },
                 error: function(xhr) {
                     console.error('Error:', xhr);
                     Alert.error('Gagal memuat detail produk.');
-
-                    $('#detailCode').text('-');
-                    $('#detailName').text('-');
-                    $('#detailCategory').text('-');
-                    $('#detailUnitLarge').text('-');
-                    $('#detailUnitSmall').text('-');
-                    $('#detailConversion').text('-');
-                    $('#detailMinStock').text('-');
-                    $('#detailStatus').text('-').removeClass().addClass(
-                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800'
-                    );
-                    $('#detailDescription').text('-');
+                    $('#productDetailModal').modal('hide');
                 }
             });
-        }
-
-        function closeModal() {
-            if (productDetailModal) {
-                productDetailModal.hide();
-            }
         }
 
         function updateStats() {

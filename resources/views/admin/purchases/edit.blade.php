@@ -584,8 +584,8 @@
             const sellingSmallVal = itemData ? formatCurrencyDisplay(itemData.selling_price_small) : '0';
 
             // Hitung subtotal awal
-            const subtotalVal = (parseFloat(qtyLargeVal) * (itemData ? parseFloat(itemData.purchase_price_large) : 0)) +
-                (parseFloat(qtySmallVal) * (itemData ? parseFloat(itemData.purchase_price_small) : 0));
+            const subtotalVal = (qtyLargeVal) * (itemData ? (itemData.purchase_price_large) : 0) +
+                (qtySmallVal) * (itemData ? (itemData.purchase_price_small) : 0);
 
             row.innerHTML = `
                 <td class="py-3 px-4">
@@ -593,13 +593,13 @@
                         <option value="">Pilih Produk</option>
                         ${products.map(product =>
                             `<option value="${product.id}"
-                                        ${itemData && product.id == itemData.product_id ? 'selected' : ''}
-                                        data-price-large="${product.purchase_price_large || 0}"
-                                        data-price-small="${product.purchase_price_small || 0}"
-                                        data-selling-large="${product.selling_price_large || 0}"
-                                        data-selling-small="${product.selling_price_small || 0}">
-                                        ${product.name} (${product.code})
-                                    </option>`
+                                            ${itemData && product.id == itemData.product_id ? 'selected' : ''}
+                                            data-price-large="${product.purchase_price_large || 0}"
+                                            data-price-small="${product.purchase_price_small || 0}"
+                                            data-selling-large="${product.selling_price_large || 0}"
+                                            data-selling-small="${product.selling_price_small || 0}">
+                                            ${product.name} (${product.code})
+                                        </option>`
                         ).join('')}
                     </select>
                 </td>

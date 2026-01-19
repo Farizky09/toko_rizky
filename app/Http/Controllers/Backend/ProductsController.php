@@ -106,30 +106,10 @@ class ProductsController extends Controller
     public function show($id)
     {
         try {
-            $product = Products::with(['category', 'unitLarge', 'unitSmall'])->findOrFail($id);
-
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'id' => $product->id,
-                    'code' => $product->code,
-                    'name' => $product->name,
-                    'description' => $product->description,
-                    'category_name' => $product->category ? $product->category->name : '-',
-                    'unitLarge_name' => $product->unitLarge ? $product->unitLarge->name : '-',
-                    'unitLarge_abbreviation' => $product->unitLarge ? $product->unitLarge->abbreviation : '-',
-                    'unitSmall_name' => $product->unitSmall ? $product->unitSmall->name : '-',
-                    'unitSmall_abbreviation' => $product->unitSmall ? $product->unitSmall->abbreviation : '-',
-                    'conversion' => $product->conversion,
-                    'min_stock' => $product->min_stock,
-                    'status' => $product->status,
-                ]
-            ]);
+            $data = $this->productsRepository->getById($id);
+            // dd($data);
+            return view('admin.products.detail', compact('data'));
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Produk tidak ditemukan'
-            ], 404);
         }
     }
     public function edit($id)
