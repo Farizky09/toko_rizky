@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # 1. Service Aplikasi (PHP-FPM)
+  app:
+    build:
+      context: .
+      dockerfile: .docker/php/Dockerfile
+    container_name: toko-rizky
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/toko_rizky
+    networks:
+      - laravel-net
+
+  # 2. Service Web Server (Nginx)
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: laravel-nginx
+    restart: unless-stopped
+    ports:
+      - "8081:80" # Akses aplikasi di http://localhost:8000
+    volumes:
+      - ./:/var/www/toko_rizky
+      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - laravel-net
+
+  # 3. Service Database (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: toko-rizky-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD} # Gunakan password yang sama untuk root
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - laravel-net
+
+networks:
+  laravel-net:
+    driver: bridge
+
+volumes:
+  db-data: # Volume untuk menyimpan data database secara permanen
