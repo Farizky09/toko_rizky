@@ -1,41 +1,32 @@
-# Gunakan image PHP 8.3 FPM Alpine (ringan dan cepat)
-FROM php:8.3-fpm-alpine
+FROM php:8.3-fpm
 
 # Set working directory
-WORKDIR /var/www/toko_rizky
+WORKDIR /var/www
 
-# Install dependensi sistem yang dibutuhkan
-RUN apk add --no-cache \
-    build-base \
-    linux-headers \
-    libzip-dev \
-    zip \
-    oniguruma-dev \
-    libxml2-dev \
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
     curl \
     libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev
-
-# Install ekstensi PHP yang umum untuk Laravel
-RUN docker-php-ext-install \
-    pdo_mysql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd \
+    libonig-dev \
+    libxml2-dev \
     zip \
-    xml
+    unzip \
+    libzip-dev \
+    libicu-dev
 
-# Install Composer (dependency manager untuk PHP)
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Hapus cache
-RUN rm -rf /var/cache/apk/*
+# Install PHP extensions (Penting untuk Laravel, Excel, dan DomPDF)
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl
 
-# Ganti user
-USER www-data
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Expose port untuk FPM
+# Copy existing application directory permissions
+COPY . /var/www
+RUN chown -R www-data:www-data /var/www
+
 EXPOSE 9000
+CMD ["php-fpm"]
