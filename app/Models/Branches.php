@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Branches extends Model
+{
+    use HasFactory;
+
+    protected $table = 'branches';
+    protected $fillable = [
+        'code',
+        'name',
+        'address',
+        'city',
+        'province',
+        'postal_code',
+        'phone',
+        'status',
+    ];
+
+    public function locations()
+    {
+        return $this->hasMany(Locations::class);
+    }
+    public function purchases()
+    {
+        return $this->hasMany(Purchases::class);
+    }
+}

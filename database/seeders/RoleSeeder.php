@@ -1,0 +1,92 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\User;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+
+class RoleSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Role::truncate();
+        $role_admin = Role::create(['name' => User::ADMIN, 'guard_name' => 'web']);
+        $role_owner = Role::create(['name' => User::OWNER, 'guard_name' => 'web']);
+        $role_cashier = Role::create(['name' => User::CASHIER, 'guard_name' => 'web']);
+        $role_inventory_staff = Role::create(['name' => User::INVENTORY_STAFF, 'guard_name' => 'web']);
+
+        $permission_admin = [
+            'read_user_management',
+            'create_user_management',
+            'update_user_management',
+            'delete_user_management',
+            'reset_password_user_management',
+            'read_role',
+            'create_role',
+            'update_role',
+            'delete_role',
+            'read_permission',
+            'create_permission',
+            'update_permission',
+            'delete_permission',
+            'read_categories',
+            'create_categories',
+            'update_categories',
+            'delete_categories',
+            'read_unit_larges',
+            'create_unit_larges',
+            'update_unit_larges',
+            'delete_unit_larges',
+            'read_unit_smalls',
+            'create_unit_smalls',
+            'update_unit_smalls',
+            'delete_unit_smalls',
+            'read_suppliers',
+            'create_suppliers',
+            'update_suppliers',
+            'delete_suppliers',
+            'read_branches',
+            'create_branches',
+            'update_branches',
+            'delete_branches',
+            'read_locations',
+            'create_locations',
+            'update_locations',
+            'delete_locations',
+            'read_products',
+            'create_products',
+            'update_products',
+            'delete_products',
+            'read_purchases',
+            'create_purchases',
+            'update_purchases',
+            'delete_purchases',
+            'read_good_receipts',
+            'create_good_receipts',
+            'update_good_receipts',
+            'delete_good_receipts',
+        ];
+
+
+        $permission_owner = [];
+        $permission_cashier = [];
+        $permission_inventory_staff = [];
+
+
+        $role_admin->givePermissionTo($permission_admin);
+        $role_owner->givePermissionTo($permission_owner);
+        $role_cashier->givePermissionTo($permission_cashier);
+        $role_inventory_staff->givePermissionTo($permission_inventory_staff);
+
+
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+    }
+}
